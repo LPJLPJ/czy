@@ -1,0 +1,727 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="源文件\MFC">
+      <UniqueIdentifier>{9e0217a5-6efe-4acb-b85a-7ba19469c914}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\MFC">
+      <UniqueIdentifier>{77366c3c-09d2-432d-8236-f718d82987d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\RTOSsource">
+      <UniqueIdentifier>{d0d20b7d-5cef-41ca-aacf-40106a627952}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\RTOSsource">
+      <UniqueIdentifier>{051a5f35-298c-44ce-adde-87ac1f170c94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\RTOSsource\Portable">
+      <UniqueIdentifier>{4ae1a7f4-5516-411d-8a68-5efb82099f70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Application">
+      <UniqueIdentifier>{4ee2de7e-c6e1-4075-a800-c5b74a3893e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Application">
+      <UniqueIdentifier>{687ba2c0-492f-47df-9dd6-c3042c00e87d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AHMI">
+      <UniqueIdentifier>{5ed7e238-78e4-4eff-a05f-2719ae63fada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AHMI\Widget">
+      <UniqueIdentifier>{d8bc6b95-26aa-4cd0-8661-fa453b6014b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\MODBUS">
+      <UniqueIdentifier>{e6f28682-7310-4401-aad1-037480c1fa23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\AHMI">
+      <UniqueIdentifier>{548d839a-062f-4a81-b061-a524795cdf7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\AHMI">
+      <UniqueIdentifier>{522d25e2-3c6e-43e2-aebc-7892fd2429c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\AHMI\widget">
+      <UniqueIdentifier>{f2b5e568-67b9-42aa-981f-7a4ed95fe868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\AHMI\widget">
+      <UniqueIdentifier>{ab8dffdc-6cd6-4d03-aab5-76e2691db13f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\AHMI\testFunc">
+      <UniqueIdentifier>{dc4104c9-2a05-4450-9458-3e326027f0b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\AHMI\testFunc">
+      <UniqueIdentifier>{7e98dbf5-fc5e-4fcd-a794-b7b1d8545ee9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="mfc.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="mfcDoc.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="mfcView.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTOS\croutine.c">
+      <Filter>源文件\RTOSsource</Filter>
+    </ClCompile>
+    <ClCompile Include="RTOS\event_groups.c">
+      <Filter>源文件\RTOSsource</Filter>
+    </ClCompile>
+    <ClCompile Include="RTOS\list.c">
+      <Filter>源文件\RTOSsource</Filter>
+    </ClCompile>
+    <ClCompile Include="RTOS\queue.c">
+      <Filter>源文件\RTOSsource</Filter>
+    </ClCompile>
+    <ClCompile Include="RTOS\tasks.c">
+      <Filter>源文件\RTOSsource</Filter>
+    </ClCompile>
+    <ClCompile Include="RTOS\timers.c">
+      <Filter>源文件\RTOSsource</Filter>
+    </ClCompile>
+    <ClCompile Include="RTOS\portable\heap_1.c">
+      <Filter>源文件\RTOSsource\Portable</Filter>
+    </ClCompile>
+    <ClCompile Include="UartCtrlDlg.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="ShowTraceInfo.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="getopt.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="globalArg.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="top.cpp">
+      <Filter>源文件\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\port\portevent_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\port\portserial_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\port\porttimer_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\mb_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\rtu\mbcrc.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\rtu\mbrtu_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfunccoils_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncdiag.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncdisc_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncholding_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncinput_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncother.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbutils.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\port\user_mb_app_m.cpp">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\ModBusMasterTask.cpp">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\UART.cpp">
+      <Filter>AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\FileLoad.cpp">
+      <Filter>AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\ActionProcessor.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\ahmiv3.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\animation.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\animationQueueHandler.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\CanvasClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\DynamicPageCfgClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\DynamicPageClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\matrixClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\myMathClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\publicVariables.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\refreshQueueHandler.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\subCanvasClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\TagClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\tagUpdate.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\TextureClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\tileBoxClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\TimerClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\widgetClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\WidgetClassInterface.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\TouchTask.cpp">
+      <Filter>AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\ButtonClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\ClockClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\KnobClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\MeterClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\NumberClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\ProgBarClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\SliderClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\TextClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\VideoClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\DynamicTexClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\OscilloscopeClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\OnOffTexture.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\IOClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\ModBusSlaveTask.cpp">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\port\demo.cpp">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\port\portevent.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\port\portserial.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\port\porttimer.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\mb.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\ascii\mbascii.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfunccoils.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncdisc.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncholding.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncinput.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncstring.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncstring_m.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\rtu\mbrtu.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="ModBusMaster\modbus\tcp\mbtcp.c">
+      <Filter>源文件\MODBUS</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\ActionTriggerClass.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Keyboard.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\InterruptTask.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\ahmirtc.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="SerialPort.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTOS\port.c">
+      <Filter>源文件\RTOSsource\Portable</Filter>
+    </ClCompile>
+    <ClCompile Include="JbusClass.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="main\AHMIInterface.cpp">
+      <Filter>源文件\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="main\main.cpp">
+      <Filter>源文件\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\animationAction.cpp">
+      <Filter>源文件\AHMI</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\TextureNumberClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="AHMI\Widget\TextureTimeClass.cpp">
+      <Filter>源文件\AHMI\widget</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MainFrm.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="mfc.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="mfcDoc.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="mfcView.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\croutine.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\event_groups.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\FreeRTOS.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\list.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\mpu_wrappers.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\projdefs.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\queue.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\semphr.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\StackMacros.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\task.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\timers.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeRTOSConfig.h">
+      <Filter>头文件\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="UartCtrlDlg.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="ShowTraceInfo.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="getopt.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="tailor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\ActionTrigger.h">
+      <Filter>AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\FileLoad.h">
+      <Filter>AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\UartClass.h">
+      <Filter>AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\trace.h">
+      <Filter>AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\port\user_mb_app.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\rtu\mbcrc.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\rtu\mbrtu.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\include\mb.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\include\mb_m.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\include\mbconfig.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\include\mbframe.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\include\mbfunc.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\include\mbport.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\include\mbproto.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\include\mbutils.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\ActionProcessor.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\AHMIBasicDefine.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\AHMIBasicStructure.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\ahmiv3.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\ahmiv3_vd.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\aniamtion.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\animationDefine.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\animationQueueHandler.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\canvasClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\canvasClass_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\drawImmediately_cd.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\DynamicPageCfgClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\DynamicPageClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\DynamicPageClass_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\matrixClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\myMathClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\privateInclude.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\publicDefine.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\publicInclude.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\publicType.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\RefreshMsgClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\refreshMsgClass_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\refreshQueueHandler.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\refreshQueueHandler_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\subCanvasClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\TagClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\tagClass_cd.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\tagClassCfg.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\tagUpdate.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\tagUpdateClass_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\TextureClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\TextureClass_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\tileBoxClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\TimerClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\widgetClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\widgetClass_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\widgetClass_cd.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\WidgetClassInterface.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\widgetClassInterface_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\TouchTask.h">
+      <Filter>AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\ButtonClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\ClockClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\KnobClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\NumberClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\ProgBarClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\SliderClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\TextClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\VideoClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\MeterClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\DynamicTexClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\OscilloscopeClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\AHMICfgDefinition.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\textureClass_cd.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\IOClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\OnOffTexture.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\port\demo.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\ascii\mbascii.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="ModBusMaster\modbus\tcp\mbtcp.h">
+      <Filter>源文件\MODBUS</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\refreshQueueHandler_cd.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\ActionTriggerClass.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\ActionTriggerClass_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\ActionTriggerClass_cd.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\tagClass_c1.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Keyboard.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\keyboard_cd.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\InterruptTask.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\ahmirtc.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="SerialPort.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\portable.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="RTOS\portmacro.h">
+      <Filter>头文件\RTOSsource</Filter>
+    </ClInclude>
+    <ClInclude Include="JbusClass.h">
+      <Filter>头文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="main\AHMIInterface.h">
+      <Filter>源文件\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\animationAction.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\moduleTest.h">
+      <Filter>头文件\AHMI</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\testFunc\testFunc.h">
+      <Filter>头文件\AHMI\testFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\testFunc\animationTest.h">
+      <Filter>头文件\AHMI\testFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\testFunc\RefreshTest.h">
+      <Filter>头文件\AHMI\testFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\testFunc\tagClassTest.h">
+      <Filter>头文件\AHMI\testFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\TextureNumberClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="AHMI\Widget\TextureTimeClass.h">
+      <Filter>头文件\AHMI\widget</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\mfc.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\mfcDoc.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="mfc.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\mfc.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,365 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7271EB13-0166-456F-B607-DC49B54E4B69}</ProjectGuid>
+    <RootNamespace>mfc</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+    <ProjectName>ahmiSimulator_v0304_V110</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)AHMI\Widget;$(ProjectDir)ModBusMaster\modbus\include;$(ProjectDir)ModBusMaster\modbus\rtu;$(PorjectDir)ModBusMaster\port;$(ProjectDir)AHMI;$(ProjectDir)RTOS;$(ProjectDir);$(ProjectDir)\AHMI\testFunc;$(IncludePath)</IncludePath>
+    <TargetName>ahmiSimulator</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(ProjectDir)ModBusSlave\port;$(ProjectDir)ModBusSlave\modbus\rtu;$(ProjectDir)ModBusSlave\modbus\include;$(ProjectDir)ModBusSlave;$(ProjectDir)ModBusMaster\modbus\rtu;$(ProjectDir)ModBusMaster\port;$(ProjectDir)ModBusMaster\modbus\include;$(ProjectDir)ModBusMaster;$(ProjectDir)AHMI;$(ProjectDir)RTOS\portable;$(ProjectDir)RTOS\;$(ProjectDir)AHMI\Widget;$(IncludePath)</IncludePath>
+    <TargetName>ahmiSimulator</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>false</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>OpenGL32.lib;GLu32.lib;Nafxcwd.lib;libcmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <HeapReserveSize>10000000</HeapReserveSize>
+      <HeapCommitSize>10000000</HeapCommitSize>
+      <StackReserveSize>10000000</StackReserveSize>
+      <StackCommitSize>10000000</StackCommitSize>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>false</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>nafxcw.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AHMI\ActionProcessor.cpp" />
+    <ClCompile Include="AHMI\ahmirtc.cpp" />
+    <ClCompile Include="AHMI\ahmiv3.cpp" />
+    <ClCompile Include="AHMI\animation.cpp" />
+    <ClCompile Include="AHMI\animationAction.cpp" />
+    <ClCompile Include="AHMI\animationQueueHandler.cpp" />
+    <ClCompile Include="AHMI\CanvasClass.cpp" />
+    <ClCompile Include="AHMI\DynamicPageCfgClass.cpp" />
+    <ClCompile Include="AHMI\DynamicPageClass.cpp" />
+    <ClCompile Include="AHMI\FileLoad.cpp" />
+    <ClCompile Include="AHMI\InterruptTask.cpp" />
+    <ClCompile Include="AHMI\Keyboard.cpp" />
+    <ClCompile Include="AHMI\matrixClass.cpp" />
+    <ClCompile Include="AHMI\TouchTask.cpp" />
+    <ClCompile Include="AHMI\myMathClass.cpp" />
+    <ClCompile Include="AHMI\publicVariables.cpp" />
+    <ClCompile Include="AHMI\refreshQueueHandler.cpp" />
+    <ClCompile Include="AHMI\subCanvasClass.cpp" />
+    <ClCompile Include="AHMI\TagClass.cpp" />
+    <ClCompile Include="AHMI\ActionTriggerClass.cpp" />
+    <ClCompile Include="AHMI\tagUpdate.cpp" />
+    <ClCompile Include="AHMI\TextureClass.cpp" />
+    <ClCompile Include="AHMI\tileBoxClass.cpp" />
+    <ClCompile Include="AHMI\TimerClass.cpp" />
+    <ClCompile Include="AHMI\UART.cpp" />
+    <ClCompile Include="AHMI\widgetClass.cpp" />
+    <ClCompile Include="AHMI\WidgetClassInterface.cpp" />
+    <ClCompile Include="AHMI\Widget\ButtonClass.cpp" />
+    <ClCompile Include="AHMI\Widget\ClockClass.cpp" />
+    <ClCompile Include="AHMI\Widget\DynamicTexClass.cpp" />
+    <ClCompile Include="AHMI\Widget\IOClass.cpp" />
+    <ClCompile Include="AHMI\Widget\KnobClass.cpp" />
+    <ClCompile Include="AHMI\Widget\MeterClass.cpp" />
+    <ClCompile Include="AHMI\Widget\NumberClass.cpp" />
+    <ClCompile Include="AHMI\Widget\OnOffTexture.cpp" />
+    <ClCompile Include="AHMI\Widget\OscilloscopeClass.cpp" />
+    <ClCompile Include="AHMI\Widget\ProgBarClass.cpp" />
+    <ClCompile Include="AHMI\Widget\SliderClass.cpp" />
+    <ClCompile Include="AHMI\Widget\TextClass.cpp" />
+    <ClCompile Include="AHMI\Widget\TextureNumberClass.cpp" />
+    <ClCompile Include="AHMI\Widget\TextureTimeClass.cpp" />
+    <ClCompile Include="AHMI\Widget\VideoClass.cpp" />
+    <ClCompile Include="getopt.c" />
+    <ClCompile Include="globalArg.c" />
+    <ClCompile Include="JbusClass.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="main\AHMIInterface.cpp" />
+    <ClCompile Include="main\main.cpp" />
+    <ClCompile Include="mfc.cpp" />
+    <ClCompile Include="mfcDoc.cpp" />
+    <ClCompile Include="mfcView.cpp" />
+    <ClCompile Include="ModBusMaster\ModBusMasterTask.cpp" />
+    <ClCompile Include="ModBusMaster\ModBusSlaveTask.cpp" />
+    <ClCompile Include="ModBusMaster\modbus\ascii\mbascii.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfunccoils.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfunccoils_m.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncdiag.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncdisc.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncdisc_m.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncholding.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncholding_m.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncinput.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncinput_m.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncother.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncstring.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbfuncstring_m.c" />
+    <ClCompile Include="ModBusMaster\modbus\functions\mbutils.c" />
+    <ClCompile Include="ModBusMaster\modbus\mb.c" />
+    <ClCompile Include="ModBusMaster\modbus\mb_m.c" />
+    <ClCompile Include="ModBusMaster\modbus\rtu\mbcrc.c" />
+    <ClCompile Include="ModBusMaster\modbus\rtu\mbrtu.c" />
+    <ClCompile Include="ModBusMaster\modbus\rtu\mbrtu_m.c" />
+    <ClCompile Include="ModBusMaster\modbus\tcp\mbtcp.c" />
+    <ClCompile Include="ModBusMaster\port\demo.cpp" />
+    <ClCompile Include="ModBusMaster\port\portevent.c" />
+    <ClCompile Include="ModBusMaster\port\portevent_m.c" />
+    <ClCompile Include="ModBusMaster\port\portserial.c" />
+    <ClCompile Include="ModBusMaster\port\portserial_m.c" />
+    <ClCompile Include="ModBusMaster\port\porttimer.c" />
+    <ClCompile Include="ModBusMaster\port\porttimer_m.c" />
+    <ClCompile Include="ModBusMaster\port\user_mb_app_m.cpp" />
+    <ClCompile Include="RTOS\croutine.c" />
+    <ClCompile Include="RTOS\event_groups.c" />
+    <ClCompile Include="RTOS\list.c" />
+    <ClCompile Include="RTOS\port.c" />
+    <ClCompile Include="RTOS\portable\heap_1.c" />
+    <ClCompile Include="RTOS\queue.c" />
+    <ClCompile Include="RTOS\tasks.c" />
+    <ClCompile Include="RTOS\timers.c" />
+    <ClCompile Include="SerialPort.cpp" />
+    <ClCompile Include="ShowTraceInfo.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="top.cpp" />
+    <ClCompile Include="UartCtrlDlg.cpp" />
+  </ItemGroup>
+  <PropertyGroup>
+    <TrackFileAccess>false</TrackFileAccess>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClInclude Include="AHMI\ActionProcessor.h" />
+    <ClInclude Include="AHMI\ActionTrigger.h" />
+    <ClInclude Include="AHMI\AHMIBasicDefine.h" />
+    <ClInclude Include="AHMI\AHMIBasicStructure.h" />
+    <ClInclude Include="AHMI\AHMICfgDefinition.h" />
+    <ClInclude Include="AHMI\ahmirtc.h" />
+    <ClInclude Include="AHMI\ahmiv3.h" />
+    <ClInclude Include="AHMI\ahmiv3_vd.h" />
+    <ClInclude Include="AHMI\aniamtion.h" />
+    <ClInclude Include="AHMI\animationAction.h" />
+    <ClInclude Include="AHMI\animationDefine.h" />
+    <ClInclude Include="AHMI\animationQueueHandler.h" />
+    <ClInclude Include="AHMI\canvasClass.h" />
+    <ClInclude Include="AHMI\canvasClass_c1.h" />
+    <ClInclude Include="AHMI\drawImmediately_cd.h" />
+    <ClInclude Include="AHMI\DynamicPageCfgClass.h" />
+    <ClInclude Include="AHMI\DynamicPageClass.h" />
+    <ClInclude Include="AHMI\DynamicPageClass_c1.h" />
+    <ClInclude Include="AHMI\FileLoad.h" />
+    <ClInclude Include="AHMI\InterruptTask.h" />
+    <ClInclude Include="AHMI\Keyboard.h" />
+    <ClInclude Include="AHMI\keyboard_cd.h" />
+    <ClInclude Include="AHMI\matrixClass.h" />
+    <ClInclude Include="AHMI\moduleTest.h" />
+    <ClInclude Include="AHMI\refreshQueueHandler_cd.h" />
+    <ClInclude Include="AHMI\tagClass_c1.h" />
+    <ClInclude Include="AHMI\testFunc\animationTest.h" />
+    <ClInclude Include="AHMI\testFunc\RefreshTest.h" />
+    <ClInclude Include="AHMI\testFunc\tagClassTest.h" />
+    <ClInclude Include="AHMI\testFunc\testFunc.h" />
+    <ClInclude Include="AHMI\textureClass_cd.h" />
+    <ClInclude Include="AHMI\TouchTask.h" />
+    <ClInclude Include="AHMI\myMathClass.h" />
+    <ClInclude Include="AHMI\privateInclude.h" />
+    <ClInclude Include="AHMI\publicDefine.h" />
+    <ClInclude Include="AHMI\publicInclude.h" />
+    <ClInclude Include="AHMI\publicType.h" />
+    <ClInclude Include="AHMI\RefreshMsgClass.h" />
+    <ClInclude Include="AHMI\refreshMsgClass_c1.h" />
+    <ClInclude Include="AHMI\refreshQueueHandler.h" />
+    <ClInclude Include="AHMI\refreshQueueHandler_c1.h" />
+    <ClInclude Include="AHMI\subCanvasClass.h" />
+    <ClInclude Include="AHMI\TagClass.h" />
+    <ClInclude Include="AHMI\tagClassCfg.h" />
+    <ClInclude Include="AHMI\tagClass_cd.h" />
+    <ClInclude Include="AHMI\ActionTriggerClass.h" />
+    <ClInclude Include="AHMI\ActionTriggerClass_c1.h" />
+    <ClInclude Include="AHMI\ActionTriggerClass_cd.h" />
+    <ClInclude Include="AHMI\tagUpdate.h" />
+    <ClInclude Include="AHMI\tagUpdateClass_c1.h" />
+    <ClInclude Include="AHMI\TextureClass.h" />
+    <ClInclude Include="AHMI\TextureClass_c1.h" />
+    <ClInclude Include="AHMI\tileBoxClass.h" />
+    <ClInclude Include="AHMI\TimerClass.h" />
+    <ClInclude Include="AHMI\trace.h" />
+    <ClInclude Include="AHMI\UartClass.h" />
+    <ClInclude Include="AHMI\widgetClass.h" />
+    <ClInclude Include="AHMI\WidgetClassInterface.h" />
+    <ClInclude Include="AHMI\widgetClassInterface_c1.h" />
+    <ClInclude Include="AHMI\widgetClass_c1.h" />
+    <ClInclude Include="AHMI\widgetClass_cd.h" />
+    <ClInclude Include="AHMI\Widget\ButtonClass.h" />
+    <ClInclude Include="AHMI\Widget\ClockClass.h" />
+    <ClInclude Include="AHMI\Widget\DynamicTexClass.h" />
+    <ClInclude Include="AHMI\Widget\IOClass.h" />
+    <ClInclude Include="AHMI\Widget\KnobClass.h" />
+    <ClInclude Include="AHMI\Widget\MeterClass.h" />
+    <ClInclude Include="AHMI\Widget\NumberClass.h" />
+    <ClInclude Include="AHMI\Widget\OnOffTexture.h" />
+    <ClInclude Include="AHMI\Widget\OscilloscopeClass.h" />
+    <ClInclude Include="AHMI\Widget\ProgBarClass.h" />
+    <ClInclude Include="AHMI\Widget\SliderClass.h" />
+    <ClInclude Include="AHMI\Widget\TextClass.h" />
+    <ClInclude Include="AHMI\Widget\TextureNumberClass.h" />
+    <ClInclude Include="AHMI\Widget\TextureTimeClass.h" />
+    <ClInclude Include="AHMI\Widget\VideoClass.h" />
+    <ClInclude Include="getopt.h" />
+    <ClInclude Include="JbusClass.h" />
+    <ClInclude Include="main\AHMIInterface.h" />
+    <ClInclude Include="ModBusMaster\modbus\ascii\mbascii.h" />
+    <ClInclude Include="ModBusMaster\modbus\include\mb.h" />
+    <ClInclude Include="ModBusMaster\modbus\include\mbconfig.h" />
+    <ClInclude Include="ModBusMaster\modbus\include\mbframe.h" />
+    <ClInclude Include="ModBusMaster\modbus\include\mbfunc.h" />
+    <ClInclude Include="ModBusMaster\modbus\include\mbport.h" />
+    <ClInclude Include="ModBusMaster\modbus\include\mbproto.h" />
+    <ClInclude Include="ModBusMaster\modbus\include\mbutils.h" />
+    <ClInclude Include="ModBusMaster\modbus\include\mb_m.h" />
+    <ClInclude Include="ModBusMaster\modbus\rtu\mbcrc.h" />
+    <ClInclude Include="ModBusMaster\modbus\rtu\mbrtu.h" />
+    <ClInclude Include="ModBusMaster\modbus\tcp\mbtcp.h" />
+    <ClInclude Include="ModBusMaster\port\demo.h" />
+    <ClInclude Include="ModBusMaster\port\user_mb_app.h" />
+    <ClInclude Include="RTOS\portable.h" />
+    <ClInclude Include="RTOS\portmacro.h" />
+    <ClInclude Include="SerialPort.h" />
+    <ClInclude Include="tailor.h" />
+    <ClInclude Include="FreeRTOSConfig.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="mfc.h" />
+    <ClInclude Include="mfcDoc.h" />
+    <ClInclude Include="mfcView.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="RTOS\croutine.h" />
+    <ClInclude Include="RTOS\event_groups.h" />
+    <ClInclude Include="RTOS\FreeRTOS.h" />
+    <ClInclude Include="RTOS\list.h" />
+    <ClInclude Include="RTOS\mpu_wrappers.h" />
+    <ClInclude Include="RTOS\projdefs.h" />
+    <ClInclude Include="RTOS\queue.h" />
+    <ClInclude Include="RTOS\semphr.h" />
+    <ClInclude Include="RTOS\StackMacros.h" />
+    <ClInclude Include="RTOS\task.h" />
+    <ClInclude Include="RTOS\timers.h" />
+    <ClInclude Include="ShowTraceInfo.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="UartCtrlDlg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\mfc.ico" />
+    <Image Include="res\mfcDoc.ico" />
+    <Image Include="res\Toolbar.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="mfc.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="res\mfc.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="mfc.rc" _x007B_648A5600-2C6E-101B-82B6-000000000014_x007D_="CMSComm" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
