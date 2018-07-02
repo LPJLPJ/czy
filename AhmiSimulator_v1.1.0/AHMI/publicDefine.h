@@ -32,10 +32,10 @@
 #define AHMI_TEX_ODD_NAME ("TextureOdd.acf")
 #define AHMI_TEX_VIDEO_NAME ("TextureVideo.acf")
 #else
-#define AHMI_CFG_FILE_NAME ("..\\testData_0304\\ConfigData.acf")
-#define AHMI_TEX_EVEN_NAME ("..\\testData_0304\\TextureEven.acf")
-#define AHMI_TEX_ODD_NAME ("..\\testData_0304\\TextureOdd.acf")
-#define AHMI_TEX_VIDEO_NAME ("..\\testData_0304\\TextureVideo.acf")
+#define AHMI_CFG_FILE_NAME ("..\\..\\testData_0304\\ConfigData.acf")
+#define AHMI_TEX_EVEN_NAME ("..\\..\\testData_0304\\TextureEven.acf")
+#define AHMI_TEX_ODD_NAME ("..\\..\\testData_0304\\TextureOdd.acf")
+#define AHMI_TEX_VIDEO_NAME ("..\\..\\testData_0304\\TextureVideo.acf")
 #endif
 
 #define TILESIZE 32
