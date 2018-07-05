@@ -858,12 +858,12 @@ funcStatus DynamicPageClass::setATag(u8 value)
 				inoutTransitioin(transitionParamIn, transitionParamOut);
 				curPageOffsetX = 0 - (s32)( (transitionParamOut * (SCREEN_WIDTH) ) / 64 ) ;
 				curPageOffsetY = 0;
-				this->mPageMatrix.A = (1 << 9);
-				this->mPageMatrix.B = (0 << 9);
-				this->mPageMatrix.C = (0 << 9);
-				this->mPageMatrix.D = (1 << 9);
-				this->mPageMatrix.E = -curPageOffsetX;
-				this->mPageMatrix.F = -curPageOffsetY;
+				this->mPageMatrix.A = (1 << 20);
+				this->mPageMatrix.B = (0 << 20);
+				this->mPageMatrix.C = (0 << 20);
+				this->mPageMatrix.D = (1 << 20);
+				this->mPageMatrix.E = -(curPageOffsetX << 9);
+				this->mPageMatrix.F = -(curPageOffsetY << 9);
 				//send refresh message
 #ifndef WHOLE_TRIBLE_BUFFER
 				refreshMsg.mElementType = ANIMATION_REFRESH_PAGE;
@@ -879,12 +879,12 @@ funcStatus DynamicPageClass::setATag(u8 value)
 					inoutTransitioin(transitionParamIn, transitionParamOut);
 					curPageOffsetX = ((SCREEN_WIDTH) << 4) - (s32)( (transitionParamOut * (SCREEN_WIDTH) ) / 64 ) ;
 					curPageOffsetY = 0;
-					this->mPageMatrix.A = (1 << 9);
-					this->mPageMatrix.B = (0 << 9);
-					this->mPageMatrix.C = (0 << 9);
-					this->mPageMatrix.D = (1 << 9);
-					this->mPageMatrix.E = -curPageOffsetX;
-					this->mPageMatrix.F = -curPageOffsetY;
+					this->mPageMatrix.A = (1 << 20);
+					this->mPageMatrix.B = (0 << 20);
+					this->mPageMatrix.C = (0 << 20);
+					this->mPageMatrix.D = (1 << 20);
+					this->mPageMatrix.E = -(curPageOffsetX << 9);
+					this->mPageMatrix.F = -(curPageOffsetY << 9);
 					//send refresh message
 #ifndef WHOLE_TRIBLE_BUFFER
 					refreshMsg.mElementType = ANIMATION_REFRESH_PAGE;
@@ -900,12 +900,12 @@ funcStatus DynamicPageClass::setATag(u8 value)
 					inoutTransitioin(transitionParamIn, transitionParamOut);
 					curPageOffsetX = 0;
 					curPageOffsetY =  (s32)( (transitionParamOut * (SCREEN_HEIGHT) ) / 64 ) - (s32)(SCREEN_HEIGHT << 4) ;
-					this->mPageMatrix.A = (1 << 9);
-					this->mPageMatrix.B = (0 << 9);
-					this->mPageMatrix.C = (0 << 9);
-					this->mPageMatrix.D = (1 << 9);
-					this->mPageMatrix.E = -curPageOffsetX;
-					this->mPageMatrix.F = -curPageOffsetY;
+					this->mPageMatrix.A = (1 << 20);
+					this->mPageMatrix.B = (0 << 20);
+					this->mPageMatrix.C = (0 << 20);
+					this->mPageMatrix.D = (1 << 20);
+					this->mPageMatrix.E = -(curPageOffsetX << 9);
+					this->mPageMatrix.F = -(curPageOffsetY << 9);
 				//send refresh message
 #ifndef WHOLE_TRIBLE_BUFFER
 					refreshMsg.mElementType = ANIMATION_REFRESH_PAGE;
@@ -921,12 +921,12 @@ funcStatus DynamicPageClass::setATag(u8 value)
 					inoutTransitioin(transitionParamIn, transitionParamOut);
 					curPageOffsetX = 0;
 					curPageOffsetY =  (s32)(SCREEN_HEIGHT << 4) - (s32)( (transitionParamOut * (SCREEN_HEIGHT) ) / 64 ) ;
-					this->mPageMatrix.A = (1 << 9);
-					this->mPageMatrix.B = (0 << 9);
-					this->mPageMatrix.C = (0 << 9);
-					this->mPageMatrix.D = (1 << 9);
-					this->mPageMatrix.E = -curPageOffsetX;
-					this->mPageMatrix.F = -curPageOffsetY;
+					this->mPageMatrix.A = (1 << 20);
+					this->mPageMatrix.B = (0 << 20);
+					this->mPageMatrix.C = (0 << 20);
+					this->mPageMatrix.D = (1 << 20);
+					this->mPageMatrix.E = -(curPageOffsetX << 9);
+					this->mPageMatrix.F = -(curPageOffsetY << 9);
 					//send refresh message
 #ifndef WHOLE_TRIBLE_BUFFER
 					refreshMsg.mElementType = ANIMATION_REFRESH_PAGE;
@@ -945,18 +945,19 @@ funcStatus DynamicPageClass::setATag(u8 value)
 					//offsety = (h/2)*(1-scaler)
 					if(transitionParamOut < 2) //in case that A exceeds the boundary
 						transitionParamOut = 2;
-					curPageOffsetX = (s32)(SCREEN_WIDTH * 8) - (s32)( transitionParamOut * (SCREEN_WIDTH) / 128 );//( (1 - trans) * SCREEN_WIDTH) / 2
-					curPageOffsetY =  (s32)(SCREEN_HEIGHT * 8) - (s32)( (transitionParamOut * (SCREEN_HEIGHT) ) / 128 ) ;
-					this->mPageMatrix.A = (s32)(0x80000 / transitionParamOut); //1.6.9
-					if(this->mPageMatrix.A >= 0x8000 )
-						this->mPageMatrix.A = 0x7fff; //the maxium number of the 1.6.9
+					curPageOffsetX = (s32)(SCREEN_WIDTH * 16) - (s32)( transitionParamOut * (SCREEN_WIDTH) / 64 );//( (1 - trans) * SCREEN_WIDTH) / 2
+					curPageOffsetY =  (s32)(SCREEN_HEIGHT * 16) - (s32)( (transitionParamOut * (SCREEN_HEIGHT) ) / 64 ) ;
+					this->mPageMatrix.A = (s32)((0x80000 / transitionParamOut) << 11); //1.11.20
+
+					if(this->mPageMatrix.A >= 0x100000 )
+						this->mPageMatrix.A = 0xfffff; //the maxium number of the 1.11.20
 					else if(this->mPageMatrix.A == 0)
 						this->mPageMatrix.A = 1;     //the munium number
-					this->mPageMatrix.B = (0 << 9);
-					this->mPageMatrix.C = (0 << 9);
+					this->mPageMatrix.B = (0 << 20);
+					this->mPageMatrix.C = (0 << 20);
 					this->mPageMatrix.D = mPageMatrix.A;
-					this->mPageMatrix.E = -curPageOffsetX;
-					this->mPageMatrix.F = -curPageOffsetY;
+					this->mPageMatrix.E = -(curPageOffsetX << 9);
+					this->mPageMatrix.F = -(curPageOffsetY << 9);
 					//send refresh message
 #ifndef WHOLE_TRIBLE_BUFFER
 					refreshMsg.mElementType = ANIMATION_REFRESH_PAGE;

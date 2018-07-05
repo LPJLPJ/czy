@@ -81,12 +81,12 @@ funcStatus SubCanvasClass::setAtag(u8 value)
 		curSubCanvasOffsetX = (s16)( ( - (s32)focusedCanvas->mwidth ) * 16 + (s32)( (transitionParamOut * focusedCanvas->mwidth ) >> 6 )) ;
 		curSubCanvasOffsetY = 0;
 
-		this->mSubCanvasMatrix.A = (1 << 9);
-		this->mSubCanvasMatrix.B = (0 << 9);
-		this->mSubCanvasMatrix.C = (0 << 9);
-		this->mSubCanvasMatrix.D = (1 << 9);
-		this->mSubCanvasMatrix.E = -curSubCanvasOffsetX;
-		this->mSubCanvasMatrix.F = -curSubCanvasOffsetY;
+		this->mSubCanvasMatrix.A = (1 << 20);
+		this->mSubCanvasMatrix.B = (0 << 20);
+		this->mSubCanvasMatrix.C = (0 << 20);
+		this->mSubCanvasMatrix.D = (1 << 20);
+		this->mSubCanvasMatrix.E = -(curSubCanvasOffsetX << 9);
+		this->mSubCanvasMatrix.F = -(curSubCanvasOffsetY << 9);
 
 		//send refresh message
 #ifndef WHOLE_TRIBLE_BUFFER
@@ -101,12 +101,12 @@ funcStatus SubCanvasClass::setAtag(u8 value)
 		curSubCanvasOffsetX = (s16) (((s32)focusedCanvas->mwidth ) * 16 - (s32)( (transitionParamOut * focusedCanvas->mwidth ) >> 6 )) ;
 		curSubCanvasOffsetY = 0;
 
-		this->mSubCanvasMatrix.A = (1 << 9);
-		this->mSubCanvasMatrix.B = (0 << 9);
-		this->mSubCanvasMatrix.C = (0 << 9);
-		this->mSubCanvasMatrix.D = (1 << 9);
-		this->mSubCanvasMatrix.E = -curSubCanvasOffsetX;
-		this->mSubCanvasMatrix.F = -curSubCanvasOffsetY;
+		this->mSubCanvasMatrix.A = (1 << 20);
+		this->mSubCanvasMatrix.B = (0 << 20);
+		this->mSubCanvasMatrix.C = (0 << 20);
+		this->mSubCanvasMatrix.D = (1 << 20);
+		this->mSubCanvasMatrix.E = -(curSubCanvasOffsetX << 9);
+		this->mSubCanvasMatrix.F = -(curSubCanvasOffsetY << 9);
 #ifndef WHOLE_TRIBLE_BUFFER
 		refreshMsg.mElementType = ANIMATION_REFRESH_PAGE;
 		refreshMsg.mElementPtr.pageptr = this;
@@ -118,12 +118,12 @@ funcStatus SubCanvasClass::setAtag(u8 value)
 		curSubCanvasOffsetX = 0 ;
 		curSubCanvasOffsetY = (s16) (( -(s32)focusedCanvas->mheight ) * 16 + (s32)( (transitionParamOut * focusedCanvas->mheight ) >> 6 ));
 
-		this->mSubCanvasMatrix.A = (1 << 9);
-		this->mSubCanvasMatrix.B = (0 << 9);
-		this->mSubCanvasMatrix.C = (0 << 9);
-		this->mSubCanvasMatrix.D = (1 << 9);
-		this->mSubCanvasMatrix.E = -curSubCanvasOffsetX;
-		this->mSubCanvasMatrix.F = -curSubCanvasOffsetY;
+		this->mSubCanvasMatrix.A = (1 << 20);
+		this->mSubCanvasMatrix.B = (0 << 20);
+		this->mSubCanvasMatrix.C = (0 << 20);
+		this->mSubCanvasMatrix.D = (1 << 20);
+		this->mSubCanvasMatrix.E = -(curSubCanvasOffsetX << 9);
+		this->mSubCanvasMatrix.F = -(curSubCanvasOffsetY << 9);
 #ifndef WHOLE_TRIBLE_BUFFER
 		refreshMsg.mElementType = ANIMATION_REFRESH_PAGE;
 		refreshMsg.mElementPtr.pageptr = this;
@@ -135,12 +135,12 @@ funcStatus SubCanvasClass::setAtag(u8 value)
 		curSubCanvasOffsetX = 0 ;
 		curSubCanvasOffsetY = (s16) (( (s32)focusedCanvas->mheight ) * 16 - (s32)( (transitionParamOut * focusedCanvas->mheight ) >> 6 ));
 
-		this->mSubCanvasMatrix.A = (1 << 9);
-		this->mSubCanvasMatrix.B = (0 << 9);
-		this->mSubCanvasMatrix.C = (0 << 9);
-		this->mSubCanvasMatrix.D = (1 << 9);
-		this->mSubCanvasMatrix.E = -curSubCanvasOffsetX;
-		this->mSubCanvasMatrix.F = -curSubCanvasOffsetY;
+		this->mSubCanvasMatrix.A = (1 << 20);
+		this->mSubCanvasMatrix.B = (0 << 20);
+		this->mSubCanvasMatrix.C = (0 << 20);
+		this->mSubCanvasMatrix.D = (1 << 20);
+		this->mSubCanvasMatrix.E = -(curSubCanvasOffsetX << 9);
+		this->mSubCanvasMatrix.F = -(curSubCanvasOffsetY << 9);
 #ifndef WHOLE_TRIBLE_BUFFER
 		refreshMsg.mElementType = ANIMATION_REFRESH_PAGE;
 		refreshMsg.mElementPtr.pageptr = this;
@@ -151,18 +151,18 @@ funcStatus SubCanvasClass::setAtag(u8 value)
 
 		if(transitionParamOut < 16) //in case that A exceeds the boundary
 			transitionParamOut = 16;
-		curSubCanvasOffsetX = (s32)(focusedCanvas->mwidth * 8) - (s32)( transitionParamOut * (focusedCanvas->mwidth) / 128 );
-		curSubCanvasOffsetY =  (s32)(focusedCanvas->mheight * 8) - (s32)( (transitionParamOut * (focusedCanvas->mheight) ) / 128 ) ;
-		this->mSubCanvasMatrix.A = (s32)(0x80000 / transitionParamOut); //1.6.9
-		if(this->mSubCanvasMatrix.A >= 0x8000 )
-			this->mSubCanvasMatrix.A = 0x7fff; //the maxium number of the 1.6.9
+		curSubCanvasOffsetX = (s32)(focusedCanvas->mwidth * 16) - (s32)( transitionParamOut * (focusedCanvas->mwidth) / 64 );
+		curSubCanvasOffsetY =  (s32)(focusedCanvas->mheight * 16) - (s32)( (transitionParamOut * (focusedCanvas->mheight) ) / 64 ) ;
+		this->mSubCanvasMatrix.A = (s32)((0x80000 / transitionParamOut) << 11); //1.6.9
+		if(this->mSubCanvasMatrix.A >= 0x100000 )
+			this->mSubCanvasMatrix.A = 0xfffff; //the maxium number of the 1.6.9
 		else if(this->mSubCanvasMatrix.A == 0)
 			this->mSubCanvasMatrix.A = 1;     //the munium number
-		this->mSubCanvasMatrix.B = (0 << 9);
-		this->mSubCanvasMatrix.C = (0 << 9);
+		this->mSubCanvasMatrix.B = (0 << 20);
+		this->mSubCanvasMatrix.C = (0 << 20);
 		this->mSubCanvasMatrix.D = this->mSubCanvasMatrix.A;
-		this->mSubCanvasMatrix.E = -curSubCanvasOffsetX;
-		this->mSubCanvasMatrix.F = -curSubCanvasOffsetY;
+		this->mSubCanvasMatrix.E = -(curSubCanvasOffsetX << 9);
+		this->mSubCanvasMatrix.F = -(curSubCanvasOffsetY << 9);
 #ifndef WHOLE_TRIBLE_BUFFER
 		refreshMsg.mElementType = ANIMATION_REFRESH_PAGE;
 		refreshMsg.mElementPtr.pageptr = this;

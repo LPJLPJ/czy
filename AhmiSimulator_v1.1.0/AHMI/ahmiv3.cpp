@@ -38,7 +38,7 @@ u32 StartAddress=0;
 
 extern u32 TileRenderCounter;
 extern u32 FrameRate;
-extern u8  sourceBuffer[2048];
+extern u8  sourceBuffer[4096];
 extern u8  GlobalBackgroundBuffer[ MAX_SCREEN_SIZE *2 ]; //used for background texture
 
 extern StructFrameBuffer  GlobalFrameBuffer2[ MAX_SCREEN_SIZE *2]; //used for double buffer
@@ -465,8 +465,8 @@ void ahmi::TexRaster(Tile* tile,Matrix* matrix,u32 addr,u16 tex_width,u16 tex_he
 	mask_alpha = (texture_ctrl&0x1);
 	tile->mask_usage = mask_alpha;
 	//u£¨x£¬y£©=A(x+E) + C(y+F)£»v£¨x£¬y£©= B(x+E) + D(y+F)
-	u0 = ((matrix->A/*1.6.9*/ * (tile->x+matrix->E)/*1.11.4*/ + matrix->C/*1.6.9*/ * (tile->y+matrix->F)/*1.11.4*/)>>5);//1.17.8
-	v0 = ((matrix->B/*1.6.9*/ * (tile->x+matrix->E)/*1.11.4*/ + matrix->D/*1.6.9*/ * (tile->y+matrix->F)/*1.11.4*/)>>5);//1.17.8
+	u0 = (((long long)matrix->A/*1.11.20*/ * ( (tile->x/*1.11.4*/ << 9)+ (long long)matrix->E)/*1.18.13*/ + (long long)matrix->C/*1.11.20*/ * ( (tile->y/*1.11.4*/ << 9)+matrix->F)/*1.18.13*/)>>25);//1.39.8
+	v0 = (((long long)matrix->B/*1.11.20*/ * ( (tile->x/*1.11.4*/ << 9)+ (long long)matrix->E)/*1.18.13*/ + (long long)matrix->D/*1.11.20*/ * ( (tile->y/*1.11.4*/ << 9)+matrix->F)/*1.18.13*/)>>25);//1.39.8
 	TileRenderCounter++;
 	for(i=0;i<TilePixelSize;i++)
 	{
@@ -477,8 +477,8 @@ void ahmi::TexRaster(Tile* tile,Matrix* matrix,u32 addr,u16 tex_width,u16 tex_he
 		unsigned int Y;
 		x=i%32;
 		y=i/32;
-		u=(u0+((matrix->A/*1.6.9*/ * x/*1.5.0*/ + matrix->C * y)>>1))/*1.17.8*/ >>8;//1.17.0
-		v=(v0+((matrix->B/*1.6.9*/ * x/*1.5.0*/ + matrix->D * y)>>1))/*1.17.8*/ >>8;//1.17.0
+		u=(u0+((matrix->A/*1.11.20*/ * x/*1.5.0*/ + matrix->C * y)>>12))/*1.17.8*/ >>8;//1.17.0
+		v=(v0+((matrix->B/*1.11.20*/ * x/*1.5.0*/ + matrix->D * y)>>12))/*1.17.8*/ >>8;//1.17.0
 #ifdef UV_LOG_GEN
 		uvLogFile.fill('0');
 		uvLogFile<< std::setw(8) << std::hex << (int)(u << 8) << " " << std::setw(8) << std::hex << (int)(v << 8) << std::endl;
@@ -1048,55 +1048,55 @@ void ahmi::DrawFrame(FramBufferPtr FrameBuffer,u8 flag,u32 StartAddr = 0)//modif
 					if (SB_Matrix == 0)
 					{//add by xt 15/3/31
 						//right
-						uutMatrix.E = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.F = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.A = uutMatrix.D = 512;//1.6.9
+						uutMatrix.E = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.F = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.A = uutMatrix.D = 0x100000;//1.11.20
 						uutMatrix.B = uutMatrix.C = 0;
 					}
 					else if (SB_Matrix == 1)
 					{//add by xt 15/3/31
 						//right
-						uutMatrix.A = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.B = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
+						uutMatrix.A = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.B = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
 						uutMatrix.C = -uutMatrix.B;
 						uutMatrix.D = uutMatrix.A ;
-						uutMatrix.E = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.F = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
+						uutMatrix.E = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.F = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
 					}
 					else if(SB_Matrix == 2)
 					{//add by xt 15/3/31
-						uutMatrix.A = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
+						uutMatrix.A = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
 						uutMatrix.B =  0;
 						uutMatrix.C =  0;
-						uutMatrix.D = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.E = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.F = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;					
+						uutMatrix.D = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.E = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.F = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;					
 					}
 					else
 					{//add by xt 15/3/31
 						//right
-						uutMatrix.A = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.B = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.C = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.D = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.E = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
-						uutMatrix.F = (s16)*((s16 *)(sourceBuffer + suffershift));
-						suffershift += 2;
+						uutMatrix.A = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.B = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.C = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.D = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.E = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
+						uutMatrix.F = (s32)*((s32 *)(sourceBuffer + suffershift));
+						suffershift += 4;
 					}
 
 					//analyze the addr_type

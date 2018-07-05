@@ -39,9 +39,9 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 	matrixTemp.matrixInit();
 	matrixTemp2.matrixInit();
 	s32 angle;
-	s16 para1,para2;
+	s32 para1,para2;
 	u32 addr;
-	s32 NewMatrix[4] = {512,0,0,512};//1.22.9
+	s32 NewMatrix[4] = {0x100000,0,0,0x100000};//1.11.20
 	int i;
 	u8 *sourcebufferaddr;
 	sourcebufferaddr = (u8 *)SoureBufferAddr;
@@ -59,35 +59,31 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 
 	if(p_wptr != NULL)
 		focusedCanvas = &gPagePtr[WorkingPageID].pCanvasList[p_wptr->ATTATCH_CANVAS];
-//#ifdef EMBEDDED	
-//	TextureClass newTexture;
-//
-//	if(*psourceshift >= (SRCBUFSIZE - 96))
-//	{
-//		*(sourcebufferaddr + (*psourceshift)++) = ENDFLAG;
-//		AHMIDraw(psourceshift);
-//
-//		newTexture.TexAddr = START_ADDR_OF_RAM + START_ADDR_OF_DISPLAY + addr_w * SIZE_OF_DISPLAY_BUFFER;
-//		newTexture.OffsetX = 0 * 16;
-//		newTexture.OffsetY = 0 * 16;
-//		newTexture.FocusedSlice = 0;
-//		newTexture.RotateAngle = 0 * 16;
-//		newTexture.ScalerX = 1 * 512;
-//		newTexture.ScalerY = 1 * 512;
-//		newTexture.ShearAngleX = 0 * 16;
-//		newTexture.SingleSliceSize = SCREEN_WIDTH * SCREEN_HEIGHT * 2;
-//		newTexture.mTexAttr = NONMASKTEX | EFMATRIX | ADDRTEXTURE | RGBA8888 | DRAWING;
-//		newTexture.TexWidth = SCREEN_WIDTH;
-//		newTexture.TexHeight = SCREEN_HEIGHT;
-//		newTexture.TexLeftTileBox = 0;
-//		newTexture.TexRightTileBox = TILE_NUM_X;
-//		newTexture.TexTopTileBox = 0;
-//		newTexture.TexButtomTileBox = TILE_NUM_Y;
-//
-//		newTexture.writeSourceBuffer(psourceshift, addtionalMatrix, p_wptr,NULL);
-//
-//	}
-//#endif
+#ifdef EMBEDDED	
+	TextureClass newTexture;
+	if(*psourceshift >= (SRCBUFSIZE - 96))
+	{
+		*(sourcebufferaddr + (*psourceshift)++) = ENDFLAG;
+		AHMIDraw(psourceshift);
+		newTexture.TexAddr = START_ADDR_OF_RAM + START_ADDR_OF_DISPLAY + addr_w * SIZE_OF_DISPLAY_BUFFER;
+		newTexture.OffsetX = 0 * 16;
+		newTexture.OffsetY = 0 * 16;
+		newTexture.FocusedSlice = 0;
+		newTexture.RotateAngle = 0 * 16;
+		newTexture.ScalerX = 1 * 512;
+		newTexture.ScalerY = 1 * 512;
+		newTexture.ShearAngleX = 0 * 16;
+		newTexture.SingleSliceSize = SCREEN_WIDTH * SCREEN_HEIGHT * 2;
+		newTexture.mTexAttr = NONMASKTEX | EFMATRIX | ADDRTEXTURE | RGBA8888 | DRAWING;
+		newTexture.TexWidth = SCREEN_WIDTH;
+		newTexture.TexHeight = SCREEN_HEIGHT;
+		newTexture.TexLeftTileBox = 0;
+		newTexture.TexRightTileBox = TILE_NUM_X;
+		newTexture.TexTopTileBox = 0;
+		newTexture.TexButtomTileBox = TILE_NUM_Y;
+		newTexture.writeSourceBuffer(psourceshift, addtionalMatrix, p_wptr,NULL);
+	}
+#endif
 	
 	
 	//TexAttr为纹理属性共16bits，不同的比特位包含纹理的不同属性，对应关系如下
@@ -104,33 +100,16 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 	//	+ (((SB_Matrix+1)>>1) << 2)
 	//	+ (SB_AddrType << 2);//用以记录指针的偏移字节总数
 
-	//recomputing the matrix attribute of current texture
-	if( !(addtionalMatrix->A == 512 && addtionalMatrix->B == 0 && addtionalMatrix->C == 0 && addtionalMatrix->D == 512) ) //indicating that current matrix is no enough
-	{
-		SB_Matrix = 3;
-		TexAttr |= ABCDEFMATRIX;
-	}
-
+	//SB_Matrix = 3;
+	//强制使用 ABCDEF 定长矩阵，不再进行矩阵变换包含的类型判断
+	TexAttr |= ABCDEFMATRIX;
 	
-	
-	//if (((*psourceshift) + texshift)>SoureBufferSize - 1)
-	//{
-	//	if ((*psourceshift)<SoureBufferSize - 1)//sourcebuffer剩余不小于16its时，写后缀
-	//	{
-	//		*(sourcebufferaddr + (*psourceshift)++) = 0;//texfisrtheader=0 or something else
-	//		*(sourcebufferaddr + (*psourceshift)++) = SB_END;//texsecondheader = \0010 0000
-	//	}
-	//	freshen(psourceshift, *pflag);//sourecebuffer 溢出时，刷新部分图片，刷新后继续
-	//	*pflag = 1;//means true,需要写背景
-	//}
-	//writing headers
-	//*(sourcebufferaddr + (*psourceshift)++) = (u8)(TexAttr >> 8 & 0xff);//texfisrtheader
-	//*(sourcebufferaddr + (*psourceshift)++) = (u8)(TexAttr & 0xff);//texsecondheader
-	// modified by xt 2015/05/07
+	// modified by xt 2015/05/07 
+	// write texture attribute
 	*(sourcebufferaddr + (*psourceshift)++) = (u8)(TexAttr & 0xff);//texfisrtheader
 	*(sourcebufferaddr + (*psourceshift)++) = (u8)((TexAttr >> 8) & 0x7f);//texsecondheader
 
-	//writing boxsize
+	// writing boxsize
 	if(pTileBox == NULL)
 	{
 		*(sourcebufferaddr + (*psourceshift)++) = this->TexLeftTileBox;//startx
@@ -156,138 +135,33 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 	//writing matrix
 	//Matrix有三种可能，0表示只有E, F，只有平移；1表示有A,B,E,F（A = D, B = -C），表示只有旋转位移.2表示有A,D,E,F放缩位移。3表示有ABCDEF。(32/64/96bits)
 	//when writing the matrix, we need to judge whether the current matrix is enough to represent the animation
-	
-
-	if (SB_Matrix == 0) // E F
-	{
-		//modified by xt 20150508
-		//初始矩阵从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵
-		matrixTemp.A = (1<<9);
-		matrixTemp.B = 0;
-		matrixTemp.C = 0;
-		matrixTemp.D = (1<<9);
-		matrixTemp.E = 0;
-		matrixTemp.F = 0;
-		
-		matrixTemp.matrixMulti(addtionalMatrix);
-
-		matrixTemp.E += -(this->OffsetX );
-		matrixTemp.F += -(this->OffsetY );
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E >> 8 & 0xff); 
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F >> 8 & 0xff);
-	}
-	//ABEF 旋转
-	else if (SB_Matrix==1)
-	{
-		//modified by xt 201505012
-		//初始矩阵从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵
-		matrixTemp.E = 0;
-		matrixTemp.F = 0;
-		matrixTemp2.E = 0;
-		matrixTemp2.F = 0;
-		//旋转角度从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵的旋转角度
-		angle = this->RotateAngle;//1.11.4
-		//计算旋转角度
-
-		//需要中心旋转需要额外的偏移量
-		if(this->mTexAttr & TEXTURE_CENTRAL_ROTATE) //中心旋转
-		{
-			para1 = 512;
-			para2 = 0;
-			myMath.CORDIC(angle,&para1,&para2);//先计算旋转的正矩阵
-			matrixTemp2.A = para1;
-			matrixTemp2.C = -para2;
-			matrixTemp2.B = para2;
-			matrixTemp2.D = para1; //因为我用的是转置矩阵，所以这样赋值
-			
-			pointTemp.mPointX = ( (s32)(this->TexWidth) * 8);//* 16 / 2;
-			pointTemp.mPointY = ( (s32)(this->TexHeight) * 8);// * 16 / 2;
-			pointTemp.leftMulMatrix(&matrixTemp2);
-			movingX = pointTemp.mPointX - ( (s32)(this->TexWidth) *8);
-			movingY = pointTemp.mPointY - ( (s32)(this->TexHeight)*8 );
-			matrixTemp2.E += movingX;
-			matrixTemp2.F += movingY;
-		}
-
-		//开始计算旋转的角度
-		para1 = 512;//cos
-		para2 = 0;  //sin
-		myMath.CORDIC(-angle,&para1,&para2);
-		matrixTemp.A = para1;
-		matrixTemp.B = para2;
-		matrixTemp.C = -para2;
-		matrixTemp.D = para1;
-		matrixTemp.matrixMulti(addtionalMatrix);
-		//计算E,F的时候需要考虑旋转方向
-		
-		matrixTemp.E += matrixTemp2.E;
-		matrixTemp.F += matrixTemp2.F;
-		matrixTemp.E += -(this->OffsetX );
-		matrixTemp.F += -(this->OffsetY );
-
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A >> 8 & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.B & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.B >> 8 & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E >> 8 & 0xff); 
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F >> 8 & 0xff);
-	} 
-	else if (SB_Matrix==2)
-	{
-		//modified by xt 20150512
-		//初始矩阵从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵
-		matrixTemp.E =0;
-		matrixTemp.F =0;
-		//放大倍数从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵
-		
-		para1 = 0x40000 / this->ScalerX;
-		para2 = 0x40000 / this->ScalerY;
-
-		matrixTemp.A = para1;
-		matrixTemp.B = 0;
-		matrixTemp.C = 0;
-		matrixTemp.D = para2;
-		matrixTemp.matrixMulti(addtionalMatrix);
-		matrixTemp.E += -(this->OffsetX );
-		matrixTemp.F += -(this->OffsetY );
-
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A >> 8 & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.D & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.D >> 8 & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E >> 8 & 0xff); 
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F >> 8 & 0xff);
-	}
-	else
+	// compute and write matrix
 	{
 		//初始矩阵从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵
 		if(p_wptr != NULL)
 		{
 			//相对于canvas的偏移量需要乘以缩放系数，由于additionalMatrix中平移量是相对于canvas当前位置的平移量，所以需要减去focusedCanvas->offset
-			matrixTemp.E =-(this->OffsetX - (focusedCanvas->moffsetX * 16)) * 512 / addtionalMatrix->A - focusedCanvas->moffsetX * 16;
-			matrixTemp.F =-(this->OffsetY - (focusedCanvas->moffsetY * 16)) * 512 / addtionalMatrix->A - focusedCanvas->moffsetY * 16;
+			matrixTemp.E =-(this->OffsetX - (long long)(focusedCanvas->moffsetX * 16)) * 0x100000 / addtionalMatrix->A - focusedCanvas->moffsetX * 16;
+			matrixTemp.F =-(this->OffsetY - (long long)(focusedCanvas->moffsetY * 16)) * 0x100000 / addtionalMatrix->A - focusedCanvas->moffsetY * 16;
 		}
 		else 
 		{
 			matrixTemp.E = -(this->OffsetX );
 			matrixTemp.F = -(this->OffsetY );
 		}
+		matrixTemp.E <<= 9;
+		matrixTemp.F <<= 9;
 
 		//旋转角度从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵的旋转角度,计算旋转角度
-		myMath.MatrixRotate(this->RotateAngle,NewMatrix);
+		myMath.MatrixRotate(this->RotateAngle, NewMatrix);
 		//错切角度从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵,计算错切角度
-		if(this->ShearAngleY == 0 && this->ShearAngleX != 0)
-				myMath.MatrixShearX(this->ShearAngleX,NewMatrix);
-		else if(this->ShearAngleY != 0 && this->ShearAngleX == 0)
-				myMath.MatrixShearY(this->ShearAngleY,NewMatrix);
-		else myMath.MatrixShearX(this->ShearAngleX,NewMatrix);
-
+		if(this->ShearAngleY == 0 && this->ShearAngleX != 0){
+			myMath.MatrixShearX(this->ShearAngleX, NewMatrix);
+		}else if(this->ShearAngleY != 0 && this->ShearAngleX == 0){
+			myMath.MatrixShearY(this->ShearAngleY, NewMatrix);
+		}else{ 
+			myMath.MatrixShearX(this->ShearAngleX, NewMatrix);
+		}
 		//需要中心旋转需要额外的偏移量
 		//旋转角度从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵的旋转角度
 		angle = this->RotateAngle;//1.11.4
@@ -295,24 +169,23 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 		matrixTemp2.F = 0;
 		if(this->mTexAttr & TEXTURE_CENTRAL_ROTATE) //中心旋转
 		{
-			para1 = 512;
+			// compute rotate matrix
+			para1 = 0x100000;
 			para2 = 0;
-			myMath.CORDIC(angle,&para1,&para2);//先计算旋转的正矩阵
+			myMath.CORDIC_32(angle, &para1, &para2);//先计算旋转的正矩阵									 k
 			matrixTemp2.A = para1;
 			matrixTemp2.C = -para2;
 			matrixTemp2.B = para2;
 			matrixTemp2.D = para1; //因为我用的是转置矩阵，所以这样赋值
 			
-			pointTemp.mPointX = ( (s32)(this->TexWidth) * 8);//* 16 / 2;
-			pointTemp.mPointY = ( (s32)(this->TexHeight) * 8);// * 16 / 2;
+			pointTemp.mPointX = ( (s32)(this->TexWidth) * 8); // * 16 / 2;
+			pointTemp.mPointY = ( (s32)(this->TexHeight) * 8); // * 16 / 2;
 			pointTemp.leftMulMatrix(&matrixTemp2);
-			movingX = pointTemp.mPointX - ( (s32)(this->TexWidth) *8);
-			movingY = pointTemp.mPointY - ( (s32)(this->TexHeight)*8 );
+			movingX = pointTemp.mPointX - ( (s32)(this->TexWidth) * 8);
+			movingY = pointTemp.mPointY - ( (s32)(this->TexHeight) * 8);
 			
-			matrixTemp2.E += movingX * 512 / addtionalMatrix->A ;
-			matrixTemp2.F += movingY * 512 / addtionalMatrix->A ;
-
-
+			matrixTemp2.E += ((movingX * 0x100000 / addtionalMatrix->A) << 9) ;
+			matrixTemp2.F += ((movingY * 0x100000 / addtionalMatrix->A) << 9) ;
 		}
 
 		matrixTemp.E += matrixTemp2.E;
@@ -321,10 +194,11 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 		//放大倍数从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵,计算放大倍数
 		//myMath.MatrixScaler(this->ScalerX,this->ScalerY,NewMatrix);
 
+		//32矩阵判断越位
 		for(i=0;i<4;i++)
 		{
-			if(NewMatrix[i]>32767)  NewMatrix[i] = 32767;
-			if(NewMatrix[i]<-32768) NewMatrix[i] = -32768;
+			if((long long)NewMatrix[i]>(long long)0x7fffffff)  NewMatrix[i] = 0x7fffffff;
+			if((long long)NewMatrix[i]<(long long)-0x7fffffff) NewMatrix[i] = -0x7fffffff;
 		}
 		matrixTemp.A = NewMatrix[0];
 		matrixTemp.B = NewMatrix[1];
@@ -335,22 +209,34 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 		//放缩量的矩阵修复（针对宽高不一致的情况）
 		matrixClass matrixTempForScale;
 		matrixTempForScale.matrixInit();
-		matrixTempForScale.A = (0x40000 / this->ScalerX);
-		matrixTempForScale.D = (0x40000 / this->ScalerY) ; 
+		matrixTempForScale.A = (0x40000 / this->ScalerX) << 11;
+		matrixTempForScale.D = (0x40000 / this->ScalerY) << 11; 
 		matrixTemp.matrixMulti(&matrixTempForScale);
 
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.A >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.A >> 24) & 0xff); 
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.B & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.B >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.B >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.B >> 24) & 0xff); 
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.C & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.C >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.C >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.C >> 24) & 0xff); 
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.D & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.D >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.D >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.D >> 24) & 0xff); 
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E & 0xff);
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E >> 8 & 0xff); 
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.E >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.E >> 24) & 0xff); 
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F & 0xff);
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.F >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.F >> 24) & 0xff); 
 	}
 
 
@@ -394,10 +280,10 @@ funcStatus TextureClass::renewTextureSourceBox(
 
 	if(additionalMatrix != NULL)
 	{
-		leftBottomPoint.mPointY = leftBottomPoint.mPointY * 512 / additionalMatrix->A;
-		rightTopPoint.mPointX = rightTopPoint.mPointX * 512 / additionalMatrix->A;
-		rightButtomPoint.mPointX = rightButtomPoint.mPointX * 512 / additionalMatrix->A;
-		rightButtomPoint.mPointY = rightButtomPoint.mPointY * 512 / additionalMatrix->A;
+		leftBottomPoint.mPointY = (long long)leftBottomPoint.mPointY * 0x100000 / additionalMatrix->A;
+		rightTopPoint.mPointX =   (long long)rightTopPoint.mPointX * 0x100000 / additionalMatrix->A;
+		rightButtomPoint.mPointX = (long long)rightButtomPoint.mPointX * 0x100000 / additionalMatrix->A;
+		rightButtomPoint.mPointY = (long long)rightButtomPoint.mPointY * 0x100000 / additionalMatrix->A;
 	}
 
 	//四个坐标点分别做旋转
@@ -597,8 +483,8 @@ funcStatus TextureClass::adjustSclaring(
 	if(p_wptr != NULL && addtionalMatrix != NULL)
 	{
 		focusedCanvas = &gPagePtr[WorkingPageID].pCanvasList[p_wptr->ATTATCH_CANVAS];
-		pointAfterScaler->mPointX =(this->OffsetX - (focusedCanvas->moffsetX * 16)) * 512 / addtionalMatrix->A + focusedCanvas->moffsetX * 16 - addtionalMatrix->E;
-		pointAfterScaler->mPointY =(this->OffsetY - (focusedCanvas->moffsetY * 16)) * 512 / addtionalMatrix->A + focusedCanvas->moffsetY * 16 - addtionalMatrix->F;
+		pointAfterScaler->mPointX =(this->OffsetX - (long long)(focusedCanvas->moffsetX * 16)) * 0x100000 / addtionalMatrix->A + focusedCanvas->moffsetX * 16 - addtionalMatrix->E;
+		pointAfterScaler->mPointY =(this->OffsetY - (long long)(focusedCanvas->moffsetY * 16)) * 0x100000 / addtionalMatrix->A + focusedCanvas->moffsetY * 16 - addtionalMatrix->F;
 	}
 	else 
 	{
