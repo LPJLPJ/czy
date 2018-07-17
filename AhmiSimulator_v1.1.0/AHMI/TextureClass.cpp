@@ -358,9 +358,13 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 	//AddrType两种可能，0表示为不需要addr，1表示为需要addr。 (0/32bits)
 	if (SB_AddrType==1)
 	{
-		//addr = (u32)(this->TexAddr + this->SingleSliceSize*(this->FocusedSlice));
-		addr = (u32)(this->TexAddr);
-		addr += (u32)(this->SingleSliceSize*(this->FocusedSlice));
+#if 0	//STM32硬件BUG导致一条语句中同时使用"+"和"*"运算符会出错
+		addr = (u32)(this->TexAddr + this->SingleSliceSize*(this->FocusedSlice));
+//		addr += (u32)(this->SingleSliceSize*(this->FocusedSlice));
+#else
+		addr = (u32)(this->SingleSliceSize*(this->FocusedSlice));
+		addr += (u32)(this->TexAddr);
+#endif
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(addr & 0xff);
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(addr >> 8 & 0xff);
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(addr >> 16 & 0xff);

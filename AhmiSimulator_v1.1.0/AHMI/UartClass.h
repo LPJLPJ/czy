@@ -28,11 +28,11 @@ typedef struct Uart
 typedef UartClass* UartClassPtr;
 
 
-void UartDataReceiveTask(void* pvParameters);
-void UartReceiveStateMachine(u8 data,u8 reset);
-void CountDownTimerCallBackFunc(TimerHandle_t pxTimer);
-void InitUartBuffer(u8 ID, u8 size, u8 TagID);
-void UpdataTag(u8 ID, u16 v);
+//void UartDataReceiveTask(void* pvParameters);
+//void UartReceiveStateMachine(u8 data,u8 reset);
+//void CountDownTimerCallBackFunc(TimerHandle_t pxTimer);
+//void InitUartBuffer(u8 ID, u8 size, u8 TagID);
+//void UpdataTag(u8 ID, u16 v);
 
 //#endif
 	

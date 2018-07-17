@@ -14,25 +14,26 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "publicInclude.h"
-#include "task.h"
+//#include "task.h"
+#include "TouchTask.h"
 
-#ifdef EMBENDDED
+#ifdef EMBEDDED
 #include "i2c_aw2083.h"
 #endif
 
-#ifdef USE_TOUCHSCREEN
+
 extern DynamicPageClassPtr  gPagePtr;
 extern u16             WorkingPageID;
 
-#ifdef PC_SIM
 
-extern "C" extern QueueHandle_t   MouseQueue;
 //鼠标
 extern PIDPoint pressPoint;
 extern PIDPoint releasePoint;
 //鼠标目前状态
 extern u8 mouseStatus;
 
+#ifdef PC_SIM
+extern "C" QueueHandle_t   MouseQueue;
 #endif
 
 #ifdef EMBEDDED
@@ -43,6 +44,11 @@ static Position PressPosition;
 #endif
 
 
+//Touch screen or mouse
+PIDPoint pressPoint;
+PIDPoint releasePoint;
+//Statuus of touch screen or mouse
+u8 mouseStatus = MOUSE_RELEASE;
 //-----------------------------
 // 函数名： MouseTouchTask
 // 触屏消息队列处理函数
@@ -52,18 +58,20 @@ static Position PressPosition;
 //-----------------------------
 void MouseTouchTask(void* pvParameters)
 {
-	PIDState MousePID;
- 	BaseType_t xStatus;
+	PIDState MousePtr;
 	ActionTriggerClass tagtrigger;
+#ifdef PC_SIM
+ 	BaseType_t xStatus;
+#endif
 
 #ifdef EMBEDDED
 	 static	u16 TouchFlag = TFNOTHING;
 	 static Position tempPosition;
 
-	 if((flag_Calibration == 0) || (flag_Calibration == 0xFFFFFFFF))
-	{
-		while(AW2083_Calibration() == 0);
-	}
+//	if((flag_Calibration == 0) || (flag_Calibration == 0xFFFFFFFF))
+//	{
+//		while(AW2083_Calibration() == 0);
+//	}
 	
  	for(;;)
 	{
@@ -120,7 +128,7 @@ void MouseTouchTask(void* pvParameters)
 				case TFTRYCLICKTWO:
 					tempPosition.pos_x = 0;
 					tempPosition.pos_y = 0;
-					tempPosition.` = 0;
+					tempPosition.event = 0;
 					break;
 				case TFCLICK:
 					tempPosition.pos_x = ScreenCurPosition.pos_x;
@@ -136,7 +144,7 @@ void MouseTouchTask(void* pvParameters)
 					break;
 				case TFTRYRELEAVEONE:
 				case TFTRYRELEAVETWO:
-					tempPosition.event = HOLD;
+					tempPosition.event = MOUSE_HOLD;
 					break;
 				case TFRELEAVE:
 					tempPosition.pos_x = PressPosition.pos_x;
@@ -144,6 +152,8 @@ void MouseTouchTask(void* pvParameters)
 					tempPosition.event = MOUSE_RELEASE;
 					PressPosition.pos_x = 0;
 					PressPosition.pos_y = 0;
+					break;
+				default:
 					break;
 			}
 
@@ -155,9 +165,47 @@ void MouseTouchTask(void* pvParameters)
 				MousePtr.y = tempPosition.pos_y;
 				MousePtr.press = tempPosition.event;
 
-				tagtrigger->mMousePID = MousePtr;
-				tagtrigger->mInputType= MOUSETOUCH;
-				gPagePtr[WorkingPageID].MouseTouch(tagtrigger);
+//				tagtrigger->mMousePID = MousePtr;
+//				tagtrigger->mInputType= MOUSETOUCH;
+//				gPagePtr[WorkingPageID].MouseTouch(tagtrigger);
+				if(MousePtr.press == MOUSE_PRESS)
+				{
+					if(mouseStatus == MOUSE_RELEASE) //mouse release
+					{
+						pressPoint.x = MousePtr.x;
+						pressPoint.y = MousePtr.y;
+						tagtrigger.mInputType= ACTION_MOUSE_PRESS;
+						mouseStatus = MOUSE_PRESS;
+					}
+					else 
+					{
+						taskYIELD();
+						continue;
+					}
+				}
+				else if(MousePtr.press == MOUSE_RELEASE)
+				{
+					if(mouseStatus == MOUSE_PRESS) //????????PRESS????????????
+					{
+						releasePoint.x = MousePtr.x;
+						releasePoint.y = MousePtr.y;
+						tagtrigger.mInputType= ACTION_MOUSE_RELEASE;
+						mouseStatus = MOUSE_RELEASE;
+					}
+				}
+				else if(MousePtr.press == MOUSE_HOLD)
+				{
+					releasePoint.x = MousePtr.x;
+					releasePoint.y = MousePtr.y;
+					tagtrigger.mInputType= ACTION_MOUSE_HOLDING;
+				}
+				else 
+				{
+					taskYIELD();
+					continue;
+				}
+				tagtrigger.MouseTouch(&pressPoint, &releasePoint);
+				taskYIELD();
 			}
 			
 		}	
@@ -170,7 +218,7 @@ void MouseTouchTask(void* pvParameters)
  	for(;;)
  	{
  		xStatus=xQueueReceive(MouseQueue,
-			                  (void*)&MousePID,
+			                  (void*)&MousePtr,
 							  portMAX_DELAY
 			                   );
  		if(xStatus!=pdPASS)
@@ -178,13 +226,13 @@ void MouseTouchTask(void* pvParameters)
  			return;
  		}
 		
-		if(MousePID.press == MOUSE_PRESS)
+		if(MousePtr.press == MOUSE_PRESS)
 		{
 			//记录按下坐标
 			if(mouseStatus == MOUSE_RELEASE) //只有当前状态是抬起的时候才允许更改按下的坐标
 			{
-				pressPoint.x = MousePID.x;
-				pressPoint.y = MousePID.y;
+				pressPoint.x = MousePtr.x;
+				pressPoint.y = MousePtr.y;
 				tagtrigger.mInputType= ACTION_MOUSE_PRESS;
 				mouseStatus = MOUSE_PRESS;
 			}
@@ -194,20 +242,20 @@ void MouseTouchTask(void* pvParameters)
 				continue;
 			}
 		}
-		else if(MousePID.press == MOUSE_RELEASE)
+		else if(MousePtr.press == MOUSE_RELEASE)
 		{
 			if(mouseStatus == MOUSE_PRESS) //只有当前的状态是PRESS的时候才允许抬起鼠标触发
 			{
-				releasePoint.x = MousePID.x;
-				releasePoint.y = MousePID.y;
+				releasePoint.x = MousePtr.x;
+				releasePoint.y = MousePtr.y;
 				tagtrigger.mInputType= ACTION_MOUSE_RELEASE;
 				mouseStatus = MOUSE_RELEASE;
 			}
 		}
-		else if(MousePID.press == MOUSE_HOLD)
+		else if(MousePtr.press == MOUSE_HOLD)
 		{
-			releasePoint.x = MousePID.x;
-			releasePoint.y = MousePID.y;
+			releasePoint.x = MousePtr.x;
+			releasePoint.y = MousePtr.y;
 			tagtrigger.mInputType= ACTION_MOUSE_HOLDING;
 		}
 		else 
@@ -215,13 +263,13 @@ void MouseTouchTask(void* pvParameters)
 			taskYIELD();
 			continue;
 		}
- 		tagtrigger.MouseTouch();
+ 		tagtrigger.MouseTouch(&pressPoint, &releasePoint);
   		taskYIELD();
  	}
 #endif
 
 }
 
-#endif
+
 
 

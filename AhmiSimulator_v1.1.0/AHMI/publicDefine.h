@@ -19,11 +19,11 @@
 #include "publicType.h"
 #include "AHMICfgDefinition.h"
 #ifdef EMBEDDED
-#include "IOConfig.h"
+#include "AHMIUserDefine.h"
 #endif
 
 #ifdef PC_SIM
-#define VERSION (0x0103) //current version in 16.16
+#define VERSION (0x0104) //current version in 16.16
 #endif
 
 #ifdef IMPLEMENTATION

@@ -329,6 +329,7 @@ void LoadTextureToSDRAM	(void* INbuffer,u32 bufsize, int size)
 
 funcStatus LoadConfigData(ConfigInfoClass* mConfigInfo)
 {
+	uint32_t Address;
 	ReadDataFromSTMFlash(mConfigInfo,sizeof(ConfigInfoClass));
 	
 	if(mConfigInfo->MagicNumber!= 0x494d4841)
@@ -353,6 +354,11 @@ funcStatus LoadConfigData(ConfigInfoClass* mConfigInfo)
 		ERROR_PRINT("connot read config string.\r\n");
 		return AHMI_FUNC_FAILURE;
 	}
+//	/*******************Send texture check sum data*****************/
+//	Address = BANK_WRITE_START_ADDR + mConfigInfo->TotalSize;
+//	
+//	SPI_FPGA_Burst_Send_CheckSum_data(0, (u8*)Address, 4096);  //4096 bytes
+//	/**************************************************************/
 	
 	return AHMI_FUNC_SUCCESS;
 }

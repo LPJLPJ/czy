@@ -25,7 +25,7 @@
 #ifdef AHMI_CORE
 class ActionTriggerClass {
 public:
-   // PIDState mMousePID;				//mouse指针，触摸屏幕触发更新时使用。0：无mouse事件
+    PIDState mMousePID;				//mouse指针，触摸屏幕触发更新时使用。0：无mouse事件
     TagClassPtr mTagPtr;			    //tag指针，tag触发更新时使用
 	u8	mInputType;					
 	//0无事件。
@@ -43,7 +43,7 @@ public:
 	int MouseTouch(DynamicPageClassPtr Ptr);
 
 	//鼠标事件
-	funcStatus MouseTouch();
+	funcStatus MouseTouch(PIDPoint* pPressPoint,PIDPoint* pReleasePoint);
 	//键盘事件
 	funcStatus keyboardTouch();
 	//控件处理

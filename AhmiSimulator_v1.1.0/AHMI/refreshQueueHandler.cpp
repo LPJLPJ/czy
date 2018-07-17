@@ -25,7 +25,7 @@
 #include "ahmi3_function.h"
 #include "semphr.h"
 #include "spi_if.h"
-#include "IOConfig.h"
+#include "AHMIUserDefine.h"
 extern u8 initAHMI;
 #endif
 
@@ -79,7 +79,7 @@ extern SemaphoreHandle_t xFPGASemaphore;
 extern u32 gFrameCount ;
 #endif
 #endif
-static u32 i = 0;
+//static u32 i = 0;
 
 #endif
 
@@ -306,12 +306,14 @@ void WidgetRefreshTask(void* pvParameters)
 		//}
 		
 		//update all the tags
+		taskENTER_CRITICAL();
 		UpdateAllTags();
 		if(refreshMsg.mElementPtr.pageptr == NULL)
 		{
 			ERROR_PRINT("ERROR in widgetRefreshTask: no element pointer given");
 			continue;
 		}
+		taskEXIT_CRITICAL();
 		drawimmediately(&refreshMsg);
 		
 
@@ -615,198 +617,6 @@ funcStatus drawimmediately(RefreshMsg* refreshMsg)
 
 
 	
-	return AHMI_FUNC_SUCCESS;
-}
-
-#endif
-
-#ifdef EMBEDDED
-#ifdef WHOLE_TRIBLE_BUFFER
-//处理refresh队列数据
-void WidgetRefreshTask(void* pvParameters)
-{
-	RefreshMsg refreshMsg;
-	BaseType_t xStatus; 
-#ifndef WHOLE_TRIBLE_BUFFER
-	u8 numOfRefreshQueue;
-#endif
-#ifdef PC_SIM
-	ahmi mahmi(gScreenWidth, gScreenHeight); 
-	myahmi = &mahmi; 
-#endif
-	for(;;) 
-	{
-		//禁止切换线程
-		//taskENTER_CRITICAL();
-#ifndef WHOLE_TRIBLE_BUFFER
-		numOfRefreshQueue = (u8)uxQueueMessagesWaiting(RefreshQueue);
-		while(numOfRefreshQueue > 0)
-		{
-			while(uxQueueMessagesWaiting(RefreshQueueWithoutDoubleBuffer) != 0)
-			{
-				xStatus=xQueueReceive(RefreshQueueWithoutDoubleBuffer,
-					(void*)&refreshMsg,
-					portMAX_DELAY);
-				if(xStatus!=pdPASS)
-				{
-					return;
-				}
-				drawimmediately(&refreshMsg); //不需要判断双缓存
-			}
-#endif
-			xStatus=xQueueReceive(RefreshQueue,
-				(void*)&refreshMsg,
-				portMAX_DELAY);
-			if(xStatus!=pdPASS)
-			{
-				return;
-			}
-
-			drawimmediately(&refreshMsg);
-			//taskEXIT_CRITICAL();
-#ifndef WHOLE_TRIBLE_BUFFER
-			numOfRefreshQueue --;
-
-#endif
-#ifdef PC_SIM
-			InvalidateRect(ViewHWND,NULL,FALSE);
-#endif
-#ifndef WHOLE_TRIBLE_BUFFER
-		}
-#endif
-		//允许切换线程
-		//vTaskDelay(SCREEN_UPDATE_TIME / portTICK_RATE_MS);
-	}
-}
-
-
-//-----------------------------
-// 函数名：  drawimmediately
-// 绘图更新函数
-// 参数列表：
-// @param1 AnimationMsg* pAnimationMsg    绘图信息
-// @param2 u8 refreshType                 绘图类型，1表示不需要判断双缓存，直接绘图。0表示需要判断双缓存
-// 备注(各个版本之间的修改):
-// ...
-//-----------------------------
-funcStatus drawimmediately(RefreshMsg* refreshMsg)
-{
-
-	TileBoxClass SourceBox;
-	u8 *stm32ptraddr;
-	u8 *sourcebufferaddr;
-	TextureClassPtr  currenttexture;
-	u32 sourceshift = 0;
-	//	CanvasClassPtr drawingCanvas;
-	//u16 animationType;
-	matrixClass matrixTemp;
-	//	AnimationMsg animationMsg;
-	//	u8 doubleBufferEn = 0;
-	ElementPtr curPtr;
-
-	u8 addr_w;
-	//	u8 addr_n;
-	u8 addr_r;
-	u8 ahmi_init = 0;
-
-	if(addr_combine == 0)
-	{
-		addr_combine = 0x102; // r->0, w->2, n->4
-		ahmi_init = 1;
-	}
-	else 
-	{
-		addr_w = addr_combine & 0x7;
-		//addr_n = (addr_combine & 0x1c0) >> 6;
-		addr_r = (addr_combine & 0x38) >> 3;
-		if(1 == addr_n) //not ready
-			return AHMI_FUNC_SUCCESS;
-		if(addr_w == addr_r)
-			addr_w = (addr_w + 4) % 6; //w += 4
-		else 
-			addr_w = (addr_w + 2) % 6; //w +=2
-		//addr_n = (addr_combine & 0x38) >> 3; //n -> r
-		addr_combine = (addr_combine & 0x38) + ( addr_w);
-		ahmi_init = 0;
-	}
-	stm32ptraddr = (u8 *)Stm32_interface_Addr;
-	if(ahmi_init == 0)
-		*(stm32ptraddr + Addr_combine) = (u8)addr_combine;
-	else 
-		*(stm32ptraddr + Addr_combine) = 0x0; //r->0, w->0
-	//#ifdef PC_SIM
-	//	*(stm32ptraddr + BUFFER_WIDTH) = globalArgs.ScreenWidth / 32;   
-	//#endif
-	//#ifdef EMBEDDED
-	//	*(stm32ptraddr + BUFFER_WIDTH) = TILE_NUM_X;
-	//#endif
-
-	//计算包围盒
-	if(refreshMsg->mElementType == ANIMATION_REFRESH_PAGE || refreshMsg->mElementType == ANIMATION_REFRESH_DOUBLE_BUFFER) //页面则更新整个包围盒
-	{
-		curPtr.pageptr = gPagePtr;
-		SourceBox.sourceReCompute(curPtr,ANIMATION_REFRESH_PAGE, &(gPagePtr[WorkingPageID].mPageMatrix) );
-	}
-	else 
-	{
-		taskEXIT_CRITICAL();
-		return AHMI_FUNC_FAILURE;
-	}
-
-	SourceBox.adjustSourceBuffer();
-
-	//写入背景
-	sourcebufferaddr = (u8 *)SoureBufferAddr;
-	//if(refreshMsg->mElementType != ANIMATION_REFRESH_PAGE) //动画切换的时候在函数内部写背景
-	//{
-	currenttexture = gPagePtr[WorkingPageID].pBackgroundTexture;
-	currenttexture->writeSourceBuffer( &sourceshift, &(gPagePtr[WorkingPageID].mPageMatrix) );
-	//}
-
-	taskENTER_CRITICAL();
-	if(refreshMsg->mElementType == ANIMATION_REFRESH_PAGE) //页面更新
-	{
-		refreshMsg->mElementPtr.pageptr->drawPage(&SourceBox,&sourceshift,1,ANIMATION_REFRESH_PAGE);
-	}
-	else if(refreshMsg->mElementType == ANIMATION_REFRESH_DOUBLE_BUFFER)
-	{
-		refreshMsg->mElementPtr.pageptr->drawPage(&SourceBox,&sourceshift,0,ANIMATION_REFRESH_PAGE);
-	}
-	taskEXIT_CRITICAL();
-
-	if(SourceBox.LeftBox > (s8)(TILE_NUM_X-1)) return AHMI_FUNC_SUCCESS;
-	if(SourceBox.RightBox > (s8)(TILE_NUM_X-1)) SourceBox.RightBox = (s8)(TILE_NUM_X-1);
-	if(SourceBox.TopBox > (s8)(TILE_NUM_Y-1)) return AHMI_FUNC_SUCCESS;
-	if(SourceBox.ButtomBox > (s8)(TILE_NUM_Y-1)) SourceBox.ButtomBox = (s8)(TILE_NUM_Y-1);
-
-	*(stm32ptraddr + Tile_start_x) = SourceBox.LeftBox ;
-	*(stm32ptraddr + Tile_start_y) = SourceBox.TopBox ;
-	*(stm32ptraddr + Tile_end_x)   = SourceBox.RightBox;
-	*(stm32ptraddr + Tile_end_y)   = SourceBox.ButtomBox ;
-
-
-	//»æÍ¼
-	if (sourceshift<SoureBufferSize-1)//sourcebufferÊ£Óà²»Ð¡ÓÚ16itsÊ±£¬¼Ó½áÊø·û
-	{//½¨ÒéÖØÐÂÉèÖÃÍ·µÄÅÅÐò£¬¿ÉÒÔ½«end·ÅÔÚµÚÒ»¸öbit£¬¿ÉÒÔ±ÜÃâ¶àÓàµÄÅÐ¶Ï
-		*(sourcebufferaddr + sourceshift++) = ENDFLAG;//texsecondheader = \0010 0000
-	}
-
-	if( refreshMsg->mElementType == ANIMATION_REFRESH_PAGE || refreshMsg->mElementType == ANIMATION_REFRESH_DOUBLE_BUFFER)
-		AHMI_draw(&sourceshift);
-
-
-	//send semaphore
-	if( (refreshMsg->mElementType == ANIMATION_REFRESH_PAGE || refreshMsg->mElementType == ANIMATION_REFRESH_DOUBLE_BUFFER) && ahmi_init != 1)
-	{
-		//addr_disp = (addr_combine & 0x38) >> 3;
-		addr_n = 1;
-		while( xSemaphoreGive( drawSemaphore ) != pdTRUE )  //switch display buffer
-		{  
-			;//return AHMI_FUNC_FAILURE;
-		} 
-	}
-
-
 	return AHMI_FUNC_SUCCESS;
 }
 
@@ -1142,6 +952,246 @@ funcStatus drawimmediately(AnimationMsg* pAnimationMsg)
 }
 #endif
 
+#ifdef EMBEDDED
+#ifdef WHOLE_TRIBLE_BUFFER  //完全三缓存
+//-----------------------------
+// 函数名：  drawimmediately
+// 绘图更新函数
+// 参数列表：
+// @param1 AnimationMsg* pAnimationMsg    绘图信息
+// @param2 u8 refreshType                 绘图类型，1表示不需要判断双缓存，直接绘图。0表示需要判断双缓存
+// 备注(各个版本之间的修改):
+// ...
+//-----------------------------
+funcStatus drawimmediately(RefreshMsg* refreshMsg)
+{
+
+	TileBoxClass SourceBox;
+	u8 *stm32ptraddr;
+	u8 *sourcebufferaddr;
+	TextureClassPtr  currenttexture;
+	u32 sourceshift = 0;
+	//	CanvasClassPtr drawingCanvas;
+	//u16 animationType;
+	matrixClass matrixTemp;
+	//	AnimationMsg animationMsg;
+	//	u8 doubleBufferEn = 0;
+	ElementPtr curPtr;
+
+	stm32ptraddr = (u8 *)Stm32_interface_Addr;
+	//animationExist = 1;//debug
+	taskENTER_CRITICAL();
+
+	//if(refreshMsg->mElementType != ANIMAITON_REFRESH_STATIC_BUFFER && staticRefresh2 == 0 && staticRefresh != 0)
+	//{
+	//	staticRefresh = 0;
+	//}
+
+	//data check
+	if(refreshMsg == NULL)
+	{
+		ERROR_PRINT("ERROR in drawimmediately: element pointer corruption");
+		return AHMI_FUNC_FAILURE;
+	}
+	if(refreshMsg->mElementType == ANIMATION_REFRESH_PAGE || 
+		refreshMsg->mElementType == ANIMATION_REFRESH_DOUBLE_BUFFER || 
+		refreshMsg->mElementType == ANIMAITON_REFRESH_STATIC_BUFFER)
+	{
+		if(refreshMsg->mElementPtr.pageptr == NULL || refreshMsg->mElementPtr.pageptr - gPagePtr >= ConfigData.NumofPages ||  refreshMsg->mElementPtr.pageptr - gPagePtr < 0)
+		{
+			ERROR_PRINT("ERROR in drawimmediately: element pointer out of boundary");
+			return AHMI_FUNC_FAILURE;
+		}
+	}
+	else
+	{
+		ERROR_PRINT("ERROR in drawimmediately: element type not supported");
+		return AHMI_FUNC_FAILURE;
+	}
+
+	//if(refreshMsg->mElementType == ANIMAITON_REFRESH_STATIC_BUFFER && animationExist == 0)
+	//{
+	//	if(staticRefresh == 1 && staticRefresh2 == 0)
+	//	{
+	//		taskEXIT_CRITICAL();
+	//		return AHMI_FUNC_SUCCESS;
+	//	}
+	//		
+	//    *( (u32*)(stm32ptraddr + addr_ahmi_0) ) = START_ADDR_OF_DISPLAY + 3 * (SIZE_OF_DISPLAY_BUFFER);
+	//	  *( (u32*)(stm32ptraddr + addr_disp_0) ) = START_ADDR_OF_DISPLAY + addr_r * SIZE_OF_DISPLAY_BUFFER;
+	//	staticRefresh2 = 0;
+	//}
+	//else
+	//{
+	if(ahmi_first == 0)
+	{
+		if(runningControl > 0)
+		{
+			taskEXIT_CRITICAL();
+			return AHMI_FUNC_SUCCESS;
+
+		}
+		//addr_combine = 0x102; // r->0, w->2, n->4
+		addr_n = 0; 
+		// r->0, w->0
+		addr_r = 0;
+		addr_w = 0;
+		ahmi_init_int = 1;
+		ahmi_first = 1;
+	}
+	else if(ahmi_init_int == 1 && ahmi_init2 == 0)
+	{
+		if(1 == addr_n || runningControl > 0) //not ready
+		{
+			taskEXIT_CRITICAL();
+			return AHMI_FUNC_SUCCESS;
+		}
+		// r->0, w->1
+		addr_r = 0;
+		addr_w = 1;
+		ahmi_init2 = 1;
+	}
+	else 
+	{
+
+		if(1 == addr_n || runningControl > 0) //not ready
+		{
+			taskEXIT_CRITICAL();
+			return AHMI_FUNC_SUCCESS;
+		}
+		if(addr_w == addr_r)
+			addr_w = (addr_w + 2) % 3; //w += 2
+		else 
+			addr_w = (addr_w + 1) % 3; //w += 1
+
+
+		ahmi_init_int = 0;
+	}
+
+
+	if(gPageNeedRefresh == 1)
+	{
+		refreshMsg->mElementType = ANIMATION_REFRESH_PAGE;
+		gPageNeedRefresh = 0;
+	}
+
+	*( (u32*)(stm32ptraddr + addr_ahmi_0) ) = START_ADDR_OF_DISPLAY + addr_w * (SIZE_OF_DISPLAY_BUFFER);
+	*( (u32*)(stm32ptraddr + addr_disp_0) ) = START_ADDR_OF_DISPLAY + addr_r * (SIZE_OF_DISPLAY_BUFFER);
+	//}//end of none static buffer
+
+	//¼ÆËã°üÎ§ºÐ
+	if(refreshMsg->mElementType == ANIMATION_REFRESH_PAGE || refreshMsg->mElementType == ANIMATION_REFRESH_DOUBLE_BUFFER || refreshMsg->mElementType == ANIMAITON_REFRESH_STATIC_BUFFER) //页面则更新整个包围盒
+	{
+		curPtr.pageptr = gPagePtr;
+		SourceBox.LeftBox = 0;
+		SourceBox.TopBox = 0;
+		SourceBox.RightBox = TILE_NUM_X - 1;
+		SourceBox.ButtomBox = TILE_NUM_Y - 1;
+		//SourceBox.sourceReCompute(curPtr,ANIMATION_REFRESH_PAGE, &(gPagePtr[WorkingPageID].mPageMatrix) );
+	}
+	else
+	{
+		taskEXIT_CRITICAL();
+		return AHMI_FUNC_FAILURE;
+	}
+
+	SourceBox.adjustSourceBuffer();
+
+	//Ð´Èë±³¾°
+
+	sourcebufferaddr = (u8 *)SoureBufferAddr;
+	//if(refreshMsg->mElementType == ANIMAITON_REFRESH_STATIC_BUFFER || animationExist != 0) //动画切换的时候写背景
+	//{
+	currenttexture = gPagePtr[WorkingPageID].pBackgroundTexture;
+	if(gPagePtr[WorkingPageID].mAnimationType != ANIMATION_REFRESH_NULL && animationExist != 0)
+		gPagePtr[WorkingPageID].clearPage(&sourceshift);
+	matrixTemp.matrixInit();
+	matrixTemp.A = gPagePtr[WorkingPageID].mPageMatrix.A;
+	matrixTemp.D = gPagePtr[WorkingPageID].mPageMatrix.D;
+	matrixTemp.E = gPagePtr[WorkingPageID].mPageMatrix.E;
+	matrixTemp.F = gPagePtr[WorkingPageID].mPageMatrix.F;
+	//currenttexture->renewTextureSourceBox(&SourceBox, &(matrixTemp), NULL);
+	currenttexture->writeSourceBuffer( &sourceshift, &(matrixTemp), NULL, NULL);
+	//}
+	//else 
+	//{
+	//	gPagePtr[WorkingPageID].writeBackGround(&sourceshift,&(gPagePtr[WorkingPageID].mPageMatrix));
+	//}
+
+
+	if(refreshMsg->mElementType == ANIMATION_REFRESH_PAGE  || animationExist != 0) //页面更新
+	{
+		gPagePtr[WorkingPageID].drawPage(&SourceBox,&sourceshift,1,ANIMATION_REFRESH_PAGE,0);
+	}
+	else if(refreshMsg->mElementType == ANIMATION_REFRESH_DOUBLE_BUFFER)
+	{
+		gPagePtr[WorkingPageID].drawPage(&SourceBox,&sourceshift,0,ANIMATION_REFRESH_PAGE,0);
+	}
+	else if(refreshMsg->mElementType == ANIMAITON_REFRESH_STATIC_BUFFER)
+		gPagePtr[WorkingPageID].drawPage(&SourceBox,&sourceshift,0,ANIMATION_REFRESH_PAGE,1);
+	taskEXIT_CRITICAL();
+
+
+
+	if(SourceBox.LeftBox > (s8)(TILE_NUM_X-1)) return AHMI_FUNC_SUCCESS;
+	if(SourceBox.RightBox > (s8)(TILE_NUM_X-1)) SourceBox.RightBox = (s8)(TILE_NUM_X-1);
+	if(SourceBox.TopBox > (s8)(TILE_NUM_Y-1)) return AHMI_FUNC_SUCCESS;
+	if(SourceBox.ButtomBox > (s8)(TILE_NUM_Y-1)) SourceBox.ButtomBox = (s8)(TILE_NUM_Y-1);
+
+
+
+	*(stm32ptraddr + Tile_start_x) = SourceBox.LeftBox ;
+	*(stm32ptraddr + Tile_start_y) = SourceBox.TopBox ;
+	*(stm32ptraddr + Tile_end_x)   = SourceBox.RightBox;
+	*(stm32ptraddr + Tile_end_y)   = SourceBox.ButtomBox ;
+
+
+	//»æÍ¼
+	if (sourceshift<SoureBufferSize-1)//sourcebufferÊ£Óà²»Ð¡ÓÚ16itsÊ±£¬¼Ó½áÊø·û
+	{//½¨ÒéÖØÐÂÉèÖÃÍ·µÄÅÅÐò£¬¿ÉÒÔ½«end·ÅÔÚµÚÒ»¸öbit£¬¿ÉÒÔ±ÜÃâ¶àÓàµÄÅÐ¶Ï
+		*(sourcebufferaddr + sourceshift++) = ENDFLAG;//texsecondheader = \0010 0000
+	}
+
+#ifdef FRAME_TEST
+	if(refreshMsg->mElementType != ANIMAITON_REFRESH_STATIC_BUFFER)
+		gFrameCount ++;
+	//TagPtr[SYSTEM_FRAME_RATE_TAG].setValue(gFrameCount, SYSTEM_FRAME_RATE_TAG);
+#endif
+	//if( pAnimationMsg->RefreshType == ANIMATION_REFRESH_PAGE || pAnimationMsg->RefreshType == ANIMATION_REFRESH_DOUBLE_BUFFER)
+	AHMI_draw(&sourceshift);
+	//if(ahmi_init_int == 1 && ahmi_init2 == 0)
+	//{
+	taskENTER_CRITICAL();
+
+#ifdef VGA
+	display_sample_mode();		
+#endif
+#ifdef LVDS
+	lvds_transfer_mode();		
+	lvds_rgb_format();
+#endif
+	display_start();
+
+	taskEXIT_CRITICAL();
+	//}
+
+
+
+	//send semaphore
+	if( ((refreshMsg->mElementType == ANIMATION_REFRESH_PAGE) || (refreshMsg->mElementType == ANIMATION_REFRESH_DOUBLE_BUFFER)) && ahmi_init_int == 0 && ahmi_init2 == 1)
+	{
+		//addr_disp = (addr_combine & 0x38) >> 3;
+		addr_n = 1;
+		while( xSemaphoreGive( drawSemaphore ) != pdTRUE )  //switch display buffer
+		{  
+			;//return AHMI_FUNC_FAILURE;
+		} 
+	}
+
+
+	return AHMI_FUNC_SUCCESS;
+}
+#endif
 #endif
 
 //-----------------------------
@@ -1315,7 +1365,7 @@ void swtichDispBufferTask(void* pvParameters)
 				vTaskDelay( 1 / portTICK_RATE_MS );
 				if(WaitDisplayDoneCount > 2000)
 				{
-					resetFPGA();
+					AHMIUsrDef_FPGARst();
 					initAHMI = 0;
 					//i = *(int *)0xFFFFFFFF;
 					ahmi_init(stm32info);

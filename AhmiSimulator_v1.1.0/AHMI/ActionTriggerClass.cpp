@@ -46,12 +46,6 @@ extern DynamicPageClassPtr gPagePtr;
 extern QueueHandle_t   ActionInstructionQueue;
 extern TagClassPtr     TagPtr;
 
-//鼠标
-extern PIDPoint pressPoint;
-extern PIDPoint releasePoint;
-//鼠标目前状态
-extern u8 mouseStatus;
-
 
 
 ActionTriggerClass::ActionTriggerClass()
@@ -83,7 +77,7 @@ funcStatus ActionTriggerClass::initActionTrigger(){
 // 备注(各个版本之间的修改):
 //   只有MOUSETOUCH类型的触发才响应
 //-----------------------------
-funcStatus ActionTriggerClass::MouseTouch()
+funcStatus ActionTriggerClass::MouseTouch(PIDPoint* pPressPoint,PIDPoint* pReleasePoint)
 {
 	u16 i,j;
 	s16 X, tempX;
@@ -95,16 +89,21 @@ funcStatus ActionTriggerClass::MouseTouch()
 	SubCanvasClassPtr curSubCan;
 	WidgetClassPtr curWidget;
 	funcStatus ahmiStatus;
-	if (this->mInputType==ACTION_MOUSE_PRESS || this->mInputType == ACTION_MOUSE_HOLDING){
+	if (this->mInputType==ACTION_MOUSE_PRESS || this->mInputType == ACTION_MOUSE_HOLDING)
+    {
 		if(this->mInputType==ACTION_MOUSE_PRESS)
 		{
-			X = ((s16)(pressPoint.x));
-			Y = ((s16)(pressPoint.y));
+			X = ((s16)(pPressPoint->x));
+			Y = ((s16)(pPressPoint->y));
+            this->mMousePID.x = pPressPoint->x;
+            this->mMousePID.y = pPressPoint->y;
 		}
 		else if(this->mInputType == ACTION_MOUSE_HOLDING)
 		{
-			X = (s16)(releasePoint.x);
-			Y = (s16)(releasePoint.y);
+			X = (s16)(pReleasePoint->x);
+			Y = (s16)(pReleasePoint->y);
+            this->mMousePID.x = pReleasePoint->x;
+            this->mMousePID.y = pReleasePoint->y;
 		}
 		ahmiStatus = AHMI_FUNC_FAILURE;
 		//先判断触碰的canvas
@@ -162,10 +161,10 @@ funcStatus ActionTriggerClass::MouseTouch()
 
 	else if(this->mInputType==ACTION_MOUSE_RELEASE)
 	{
-		X = (s16)(pressPoint.x);
-		Y = (s16)(pressPoint.y);
-		releaseX = (s16)(releasePoint.x);
-		releaseY = (s16)(releasePoint.y);
+		X = (s16)(pPressPoint->x);
+		Y = (s16)(pPressPoint->y);
+		releaseX = (s16)(pReleasePoint->x);
+		releaseY = (s16)(pReleasePoint->y);
 		ahmiStatus = AHMI_FUNC_FAILURE;
 		//先判断触碰的canvas
 		for(i = 0; i < curPage->mNumOfCanvas; i++)

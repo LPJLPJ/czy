@@ -29,7 +29,7 @@
 #define TAGWRITE 1
 
 //专用的TAG标号
-#define NUM_OF_SYSTEM_TAG (8) //专用tag个数
+#define NUM_OF_SYSTEM_TAG (9) //专用tag个数
 #define SYSTEM_TAG_0 (0)//默认的0号tag
 #define SYSTEM_KEYBOARD_TAG (1) //键盘tag
 #define SYSTEM_RTC_YEAR_TAG (4)      //默认的RTC的tag
@@ -38,6 +38,7 @@
 #define SYSTEM_VIDEO_TAG            (2) //默认绑定视频控件的tag
 #define SYSTEM_BACKLIGHT_TAG        (6) //默认调节背光的tag
 #define SYSTEM_ALARM_TAG            (7) //蜂鸣器的tag
+#define SYSTEM_FRAME_RATE_TAG       (8) //帧率Tag，用来测试显示帧率
 #define NORMAL_TAG     (10)    //其他用户添加的tag
 
 //tag的element type

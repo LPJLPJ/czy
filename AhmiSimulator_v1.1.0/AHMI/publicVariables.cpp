@@ -97,11 +97,6 @@ xTaskHandle screenUpdateTaskHandle;
 xTaskHandle moduleTestTaskHandler;
 #endif
 
-//鼠标
-PIDPoint pressPoint;
-PIDPoint releasePoint;
-//鼠标目前状态
-u8 mouseStatus = MOUSE_RELEASE;
 //中断
 SemaphoreHandle_t interuptSemaphore;
 SemaphoreHandle_t drawSemaphore;
