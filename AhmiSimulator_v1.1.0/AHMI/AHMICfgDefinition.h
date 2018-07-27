@@ -30,7 +30,7 @@
 #define USE_TOUCHSCREEN
 #define TEST_VECTOR_GEN  //打开会生成FPGA专用的仿真文件
 //#define USE_UART
-#define IMPLEMENTATION   //专用于集成版本的软件
+//#define IMPLEMENTATION   //专用于集成版本的软件
 #define KEYBOARD_DEBUG  //打开用于调试键盘的指令
 //#define TEST_LOG_GEN
 //#define TILE_BUFFER_LOG_GEN

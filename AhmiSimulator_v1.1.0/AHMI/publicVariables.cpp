@@ -160,6 +160,8 @@ u8  gPageNeedFresh;
 u16 gScreenWidth;
 u16 gScreenHeight;
 char* cfgString;
+//screen ratio
+s16 screenratio;
 
 //video
 u8 addr_cvbs = 0;

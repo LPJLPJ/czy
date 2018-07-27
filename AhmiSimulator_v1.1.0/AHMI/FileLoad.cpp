@@ -36,6 +36,8 @@ FILE *TexOdd;
 FILE *TexEven;
 FILE *TexVideo;
 extern u8       VideoTextureBuffer[VIDEO_BUF_SIZE];
+
+extern s16 screenratio;
 //DynamicPageClassPtr newPage;
 
 
@@ -101,6 +103,8 @@ int LoadConfigData(ConfigInfoClass* mConfigInfo)
 		ERROR_PRINT("This is not a AHMI Source File.\r\n");
 		return AHMI_FUNC_FAILURE;
 	}
+	// 使用全局变量对该宽高比例值进行存储 (宽 / 高 )
+	screenratio = mConfigInfo->screenratio;
 	WriteText(text,"The version of current file is %04x. The version of current project is %04x.\r\n",mConfigInfo->AHMIInfo.Version,VERSION);
 	ERROR_PRINT(text);
 	if(mConfigInfo->AHMIInfo.Version != (u16)VERSION)

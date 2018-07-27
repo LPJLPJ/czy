@@ -60,6 +60,7 @@ public:
 	u8  InterfaceType;//表示通讯协议类型,0为AHMI自订协议，1为Modbus Master，2为Modbus Slave。
 	u8  TagStringLength;//表示字符串类型tag的最大长度。
 	u8  innerClockEn;   //内部时钟使能
+	s16 screenratio;    //屏幕拉伸比例
 	AHMIInfoClass AHMIInfo;
 };
 

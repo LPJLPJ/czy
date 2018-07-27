@@ -11,7 +11,7 @@ extern u8       sourceBuffer[2048];
 extern DynamicPageClassPtr gPagePtr;
 extern u16             WorkingPageID;
 extern	u8 addr_w;
-
+extern s16 screenratio; //解决长宽比例不一致的情况
 
 TextureClass::TextureClass(void)
 {
@@ -221,11 +221,12 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 		matrixTemp.D = para1;
 		matrixTemp.matrixMulti(addtionalMatrix);
 		//计算E,F的时候需要考虑旋转方向
-		
+
 		matrixTemp.E += matrixTemp2.E;
 		matrixTemp.F += matrixTemp2.F;
 		matrixTemp.E += -(this->OffsetX );
 		matrixTemp.F += -(this->OffsetY );
+
 
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A >> 8 & 0xff);
@@ -235,7 +236,7 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E >> 8 & 0xff); 
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F & 0xff);
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F >> 8 & 0xff);
-	} 
+	} 												  
 	else if (SB_Matrix==2)
 	{
 		//modified by xt 20150512
@@ -303,21 +304,33 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 			matrixTemp2.B = para2;
 			matrixTemp2.D = para1; //因为我用的是转置矩阵，所以这样赋值
 			
-			pointTemp.mPointX = ( (s32)(this->TexWidth) * 8);//* 16 / 2;
-			pointTemp.mPointY = ( (s32)(this->TexHeight) * 8);// * 16 / 2;
-			pointTemp.leftMulMatrix(&matrixTemp2);
-			movingX = pointTemp.mPointX - ( (s32)(this->TexWidth) *8);
-			movingY = pointTemp.mPointY - ( (s32)(this->TexHeight)*8 );
-			
+			//计算放缩量的修复矩阵修复（针对屏幕不一致的情况）
+			matrixClass matrixTempForScale;
+			matrixTempForScale.matrixInit();
+			//由于给的参数是屏幕显示宽高比例，所以在使用的时候要进行取反来实现修正
+			matrixTempForScale.A = (512);
+			matrixTempForScale.D = (screenratio) ; 
+
+			PointClass pointTemp2(0,0), pointTemp3(0,0);
+			//计算旋转导致的中心偏移量
+ 			pointTemp2.mPointX = ( (s32)(this->TexWidth) * 8);//* 16 / 2;
+			pointTemp2.mPointY = ( (s32)(this->TexHeight) * 8);// * 16 / 2;
+			pointTemp2.leftMulMatrix(&matrixTemp2);
+			//计算旋后的中心使用放缩修正矩阵导致的中心偏移量
+			pointTemp3.mPointX = (pointTemp2.mPointX);//* 16 / 2;
+			pointTemp3.mPointY = (pointTemp2.mPointY);// * 16 / 2;
+			pointTemp3.leftMulMatrix(&matrixTempForScale);
+
+			movingX = pointTemp2.mPointX - ( (s32)(this->TexWidth) *8) + pointTemp3.mPointX - pointTemp2.mPointX;
+			movingY = pointTemp2.mPointY - ( (s32)(this->TexHeight)*8) + pointTemp3.mPointY - pointTemp2.mPointY;
+
 			matrixTemp2.E += movingX * 512 / addtionalMatrix->A ;
 			matrixTemp2.F += movingY * 512 / addtionalMatrix->A ;
-
 
 		}
 
 		matrixTemp.E += matrixTemp2.E;
 		matrixTemp.F += matrixTemp2.F;
-
 		//放大倍数从BasicTexture结构体中获取，BasicTexture中存储的是正矩阵,计算放大倍数
 		//myMath.MatrixScaler(this->ScalerX,this->ScalerY,NewMatrix);
 
@@ -332,11 +345,14 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 		matrixTemp.D = NewMatrix[3];
 
 		matrixTemp.matrixMulti(addtionalMatrix);
-		//放缩量的矩阵修复（针对宽高不一致的情况）
+		////放缩量的矩阵修复（针对屏幕宽高不一致的情况）
+
+		//放缩量的矩阵修复（针对屏幕宽高不一致的情况）
+ 		//由于给的参数是屏幕显示宽高比例，所以在使用的时候要进行取反来实现修正
 		matrixClass matrixTempForScale;
-		matrixTempForScale.matrixInit();
-		matrixTempForScale.A = (0x40000 / this->ScalerX);
-		matrixTempForScale.D = (0x40000 / this->ScalerY) ; 
+		matrixTempForScale.matrixInit(); 
+		matrixTempForScale.A = (0x40000 / 512);
+		matrixTempForScale.D = (0x40000 / screenratio) ; 
 		matrixTemp.matrixMulti(&matrixTempForScale);
 
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A & 0xff);
