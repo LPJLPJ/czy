@@ -115,8 +115,13 @@ PointClass::PointClass(s32 x, s32 y)
 funcStatus PointClass::leftMulMatrix(matrixClassPtr pMatrix)
 {
 	s32 pointX, pointY;
-	pointX = ((pMatrix->A * (this->mPointX+ pMatrix->E) ) >> 9) + ((pMatrix->C * (this->mPointY+ pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
-	pointY = ((pMatrix->B * (this->mPointX+ pMatrix->E) ) >> 9) + ((pMatrix->D * (this->mPointY+ pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
+#if 0
+	pointX = ((pMatrix->A * (this->mPointX + pMatrix->E) ) >> 9) + (pMatrix->C * ((this->mPointY + pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
+	pointY = ((pMatrix->B * (this->mPointX + pMatrix->E) ) >> 9) + (pMatrix->D * ((this->mPointY + pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
+#else
+	pointX = (((long long)pMatrix->A * (this->mPointX + (pMatrix->E >> 16)) ) >> 20) + (((long long)pMatrix->C * (this->mPointY + (pMatrix->F >> 16))) >> 20);//4位小数位,先平移再旋转
+	pointY = (((long long)pMatrix->B * (this->mPointX + (pMatrix->E >> 16)) ) >> 20) + (((long long)pMatrix->D * (this->mPointY + (pMatrix->F >> 16))) >> 20);//4位小数位,先平移再旋转
+#endif
 	this->mPointX = pointX;
 	this->mPointY = pointY;
 	return AHMI_FUNC_SUCCESS;
@@ -153,12 +158,12 @@ funcStatus PointClass::pointRotating(
 	s16 RotateAngle//1.6.9，纹理旋转角度，度表示，顺时针为正
 	)
 {
-	s16 para1,para2;
+	s32 para1,para2;
 	myMathClass myMath;
 	matrixClass matrixTemp;
-	para1 = 512; //cos
+	para1 = 0x100000; //cos
 	para2 = 0;   //sin
-	myMath.CORDIC(RotateAngle,&para1,&para2);//先计算旋转的正矩阵
+	myMath.CORDIC_32(RotateAngle,&para1,&para2);//先计算旋转的正矩阵
 	matrixTemp.A = para1;
 	matrixTemp.C = -para2;
 	matrixTemp.B = para2;

@@ -76,27 +76,6 @@ funcStatus CanvasClass::drawCanvas(
 	curPtr.scptr = scptr;
 	drawingCanvasTileBox.sourceReCompute(curPtr, ANIMATION_REFRESH_CANVAS, &(curCanvasMatrix) );
 
-	//s8 drawingCanvasLeftBox   = (( (s16)(this->moffsetX)  )>>5);
-	//s8 drawingCanvasRightBox  = (( ( (s16)(this->moffsetX + this->mwidth) )>>5) );
-	//s8 drawingCanvasTopBox    = (( (s16) (this->moffsetY)   )>>5);
-	//s8 drawingCanvasButtomBox = (( ( (s16)(this->moffsetY + this->mheight) )>>5) );
-	
-	//compute whether the source box is overlapped
-	//if(drawingCanvasLeftBox < 0)
-	//	drawingCanvasLeftBox = 0;
-	//if(drawingCanvasTopBox < 0)
-	//	drawingCanvasTopBox = 0;
-	//if(drawingCanvasRightBox >  (s8)(TILE_NUM_X - 1) )
-	//	drawingCanvasRightBox = (s8)(TILE_NUM_X - 1) ;
-	//if(drawingCanvasButtomBox > (s8)(TILE_NUM_Y - 1) )
-	//	drawingCanvasButtomBox = (s8)(TILE_NUM_Y - 1) ;
-	//判断包围盒
-	//if(
-	//	pTileBox->LeftBox   > drawingCanvasRightBox     ||
-	//	pTileBox->TopBox    > drawingCanvasButtomBox    ||
-	//	pTileBox->RightBox  < drawingCanvasLeftBox	    ||
-	//	pTileBox->ButtomBox < drawingCanvasTopBox
-	//)
 	if(drawingCanvasTileBox.sourceBoxOverlap(pTileBox) == AHMI_FUNC_FAILURE) //no overlap
 		return AHMI_FUNC_SUCCESS;
 	//写一个画布中所有控件
@@ -385,14 +364,14 @@ taskENTER_CRITICAL();
 		curWidth = 1;
 	if(curHeight == 0)
 		curHeight = 1;
-	scalerX = ((1024 * 512 / curWidth ) << 11)  ; //trans into 1.6.9
-	scalerY = ((1024 * 512 / curHeight ) << 11) ; //trans into 1.6.9
-	if(scalerX > 0x100000)
-		scalerX = 0xfffff; //the maxium
+	scalerX = (((long long)1024 * 512 / curWidth ) << 11)  ; //trans into 1.11.20
+	scalerY = (((long long)1024 * 512 / curHeight ) << 11) ; //trans into 1.11.20
+	if(scalerX > 0x100000000)
+		scalerX = 0xfffffff; //the maxium
 	else if(scalerX == 0)
 		scalerX = 1;
-	if(scalerY > 0x100000)
-		scalerY = 0xfffff; //the maxium
+	if(scalerY > 0x100000000)
+		scalerY = 0xfffffff; //the maxium
 	else if(scalerY == 0)
 		scalerY = 1;
 	this->mCanvasMatrix.A = scalerX;

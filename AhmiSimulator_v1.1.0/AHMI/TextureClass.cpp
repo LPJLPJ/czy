@@ -483,8 +483,8 @@ funcStatus TextureClass::adjustSclaring(
 	if(p_wptr != NULL && addtionalMatrix != NULL)
 	{
 		focusedCanvas = &gPagePtr[WorkingPageID].pCanvasList[p_wptr->ATTATCH_CANVAS];
-		pointAfterScaler->mPointX =(this->OffsetX - (long long)(focusedCanvas->moffsetX * 16)) * 0x100000 / addtionalMatrix->A + focusedCanvas->moffsetX * 16 - addtionalMatrix->E;
-		pointAfterScaler->mPointY =(this->OffsetY - (long long)(focusedCanvas->moffsetY * 16)) * 0x100000 / addtionalMatrix->A + focusedCanvas->moffsetY * 16 - addtionalMatrix->F;
+		pointAfterScaler->mPointX =(this->OffsetX - (long long)(focusedCanvas->moffsetX * 16)) * 0x100000 / addtionalMatrix->A + focusedCanvas->moffsetX - (addtionalMatrix->E >> 9);
+		pointAfterScaler->mPointY =(this->OffsetY - (long long)(focusedCanvas->moffsetY * 16)) * 0x100000 / addtionalMatrix->A + focusedCanvas->moffsetY - (addtionalMatrix->F >> 9);
 	}
 	else 
 	{
