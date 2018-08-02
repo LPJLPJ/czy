@@ -31,7 +31,8 @@
 //    15   : drawing,是否绘制，只用于软件
 //    14   : using widget box 使用widget的包围盒
 //    13   : animationMoving 在绘制纹理动画时是否移动，只用于软件
-//    12-11：reserved
+//    12   : using_phsical_pixel_ratio 修正因为屏幕像素点不是正方形导致的畸变问题，1表示需要修正，只用于软件, by zuz 20180802
+//    11   : reserved, by zuz 20180802
 //    10-9 : maskType mask与或非
 //    8    : addrType 地址类型
 //    7-4  : TexType 纹理类型

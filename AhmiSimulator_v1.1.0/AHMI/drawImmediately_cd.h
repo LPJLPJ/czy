@@ -133,6 +133,8 @@
 #define     ANIMATION_MOVING        0x4000 //有动画时纹理需要移动
 #define     ANIMATION_NO_MOVING     0      //有动画时纹理不需要移动
 
+#define  USING_PIXEL_RATIO    0x1000      //是否使用像素点修正
+
 #define  ENDFLAG              0x1
 
 

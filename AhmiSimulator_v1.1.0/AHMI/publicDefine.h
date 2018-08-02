@@ -24,6 +24,7 @@
 
 #ifdef PC_SIM
 #define VERSION (0x0104) //current version in 16.16
+#define MINOR_VERSION (0x01) //current minor version 
 #endif
 
 #ifdef IMPLEMENTATION
