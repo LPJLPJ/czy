@@ -416,12 +416,14 @@ funcStatus MeterClass::renderTextureAngle
 		{
 			TexturePtr[PointerPtr].RotateAngle = Angle + startAngle;//额外加上指针纹理的初始角度,//12.4
 			TexturePtr[PointerPtr].mTexAttr |= ABCDEFMATRIX;
+			TexturePtr[PointerPtr].mTexAttr |= USING_PIXEL_RATIO;//pointer needs to be fixed, by zuz20180802
 			Angle = TexturePtr[PointerPtr].RotateAngle - ((s16)(p_wptr->MeterMinAngle) << 4) - startAngle;// + (45*16);//////指针角度和起始角度之间相对角度  （小小火车侠）
 		}
 	else //逆时针
 		{
 			TexturePtr[PointerPtr].RotateAngle = -Angle + startAngle;
 			TexturePtr[PointerPtr].mTexAttr |= ABCDEFMATRIX;
+			TexturePtr[PointerPtr].mTexAttr |= USING_PIXEL_RATIO;//pointer needs to be fixed, by zuz20180802
 			Angle =   TexturePtr[PointerPtr].RotateAngle + ((s16)(p_wptr->MeterMinAngle)<<4) - startAngle;// - 45*16; //赋值为指针旋转的角度
 	   }
 	  //StartPoint = ((startAngle + 45*16 ) / 1440) % 4;///////起始旋转角度所在象限 

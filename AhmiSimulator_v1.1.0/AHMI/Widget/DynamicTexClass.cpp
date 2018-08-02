@@ -279,6 +279,7 @@ funcStatus DynamicTexClass::widgetCtrl(
 		texturePtr[0].RotateAngle = angle * 16;
 		texturePtr[0].mTexAttr |= TEXTURE_CENTRAL_ROTATE;
 		texturePtr[0].mTexAttr |= TEXTURE_USING_WIDGET_BOX;
+		texturePtr[0].mTexAttr |= USING_PIXEL_RATIO;  //needs to be fixed, by zuz 20180802
 		//重新计算包围盒
 		texturePtr[0].RenewRotateTextureSourceBox();
 

@@ -52,6 +52,7 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 	PointClass pointTemp(this->OffsetX,this->OffsetY);  //用来计算中心旋转偏移量的矩阵 NULL == psourceshift ||
 	s32 movingX, movingY;    //x,y方向需要偏移的偏移量
 
+
 	if(  NULL == addtionalMatrix || NULL == psourceshift){
 		ERROR_PRINT("ERROR: data is NULL pointer");
 		return AHMI_FUNC_FAILURE;
@@ -106,6 +107,12 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 
 	//recomputing the matrix attribute of current texture
 	if( !(addtionalMatrix->A == 512 && addtionalMatrix->B == 0 && addtionalMatrix->C == 0 && addtionalMatrix->D == 512) ) //indicating that current matrix is no enough
+	{
+		SB_Matrix = 3;
+		TexAttr |= ABCDEFMATRIX;
+	}
+
+	if( TexAttr & USING_PIXEL_RATIO ) // needs to fix ellipse
 	{
 		SB_Matrix = 3;
 		TexAttr |= ABCDEFMATRIX;
@@ -349,11 +356,14 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 
 		//放缩量的矩阵修复（针对屏幕宽高不一致的情况）
  		//由于给的参数是屏幕显示宽高比例，所以在使用的时候要进行取反来实现修正
-		matrixClass matrixTempForScale;
-		matrixTempForScale.matrixInit(); 
-		matrixTempForScale.A = (0x40000 / 512);
-		matrixTempForScale.D = (0x40000 / screenratio) ; 
-		matrixTemp.matrixMulti(&matrixTempForScale);
+		if(TexAttr & USING_PIXEL_RATIO) //needs to fix the ellipse pixel, by zuz 20180802
+		{
+		    matrixClass matrixTempForScale;
+		    matrixTempForScale.matrixInit(); 
+		    matrixTempForScale.A = (0x40000 / 512);
+		    matrixTempForScale.D = (0x40000 / screenratio) ; 
+		    matrixTemp.matrixMulti(&matrixTempForScale);
+		}
 
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A >> 8 & 0xff);
