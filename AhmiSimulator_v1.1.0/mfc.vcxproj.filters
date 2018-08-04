@@ -720,6 +720,7 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
+    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

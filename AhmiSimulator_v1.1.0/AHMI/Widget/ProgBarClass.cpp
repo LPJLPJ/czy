@@ -16,6 +16,7 @@
 #include "AHMIBasicDefine.h"
 #include "aniamtion.h"
 #include "ProgBarClass.h"
+#include "drawImmediately_cd.h"
 
 #ifdef AHMI_CORE
 extern TagClassPtr			TagPtr;
@@ -363,6 +364,7 @@ funcStatus ProgBarClass::renderTexture
 	dir = (p_wptr->WidgetAttr & PROGBAR_DIR  )? 1 : 0;
 	changeColor = (p_wptr->WidgetAttr & CHANGECOLOR  )? 1 : 0;
 	lineChangeColor = (p_wptr->WidgetAttr & LINE_CHANGE_COLOR  )? 1 : 0;
+	lineChangeColor = 0;
 	width = p_wptr->WidgetWidth;
 	height = p_wptr->WidgetHeight;
 	offsetX = p_wptr->WidgetOffsetX;
@@ -432,7 +434,8 @@ funcStatus ProgBarClass::renderTexture
 			{
 				if(changeColorMode) //突变
 				{
-					startB = (u8)p_wptr->COLOR0GB;
+					
+					/*startB = (u8)p_wptr->COLOR0GB;
 					startG = (u8)(p_wptr->COLOR0GB >> 8);
 					startR = (u8)p_wptr->COLOR1B_COLOR0R;
 					endB = (u8)(p_wptr->COLOR2GB);
@@ -440,13 +443,19 @@ funcStatus ProgBarClass::renderTexture
 					endR = (u8)(p_wptr->COLOR2R);
 					curB = (u8)(p_wptr->COLOR1B_COLOR0R >> 8);
 					curG = (u8)(p_wptr->COLOR1RG);
-					curR = (u8)(p_wptr->COLOR1RG >> 8);
+					curR = (u8)(p_wptr->COLOR1RG >> 8);*/
 					threshold0 = p_wptr->THRESHOLD0_L + (p_wptr->THRESHOLD0_H << 8);
 					threshold1 = p_wptr->THRESHOLD1_L + (p_wptr->THRESHOLD1_H << 8);
 
+					//mask
+					texturePtr[1].OffsetY = (offsetY)<<4;
+					texturePtr[1].TexHeight = newHeight;
+					texturePtr[1].TexTopTileBox = (u8)topBox;
+					texturePtr[1].mTexAttr |= (TEXTURE_USING_WIDGET_BOX);
+
 					if(thresholdNum) //3个阈值
 					{
-						if(value < threshold0)
+						/*if(value < threshold0)
 						{
 							curB = startB;
 							curG = startG;
@@ -457,16 +466,56 @@ funcStatus ProgBarClass::renderTexture
 							curB = endB;
 							curG = endG;
 							curR = endR;
+						}*/
+						
+						texturePtr[2].TexTopTileBox = (u8)topBox;
+						
+						texturePtr[3].TexTopTileBox = (u8)topBox;
+						
+						texturePtr[4].TexTopTileBox = (u8)topBox;
+						
+						
+						barPtr = 4;
+
+						if(value < threshold0){
+							//t1
+							texturePtr[2].mTexAttr |= (DRAWING);
+							texturePtr[3].mTexAttr &= ~(DRAWING);
+							texturePtr[4].mTexAttr &= ~(DRAWING);
+						}else if(value >= threshold1){
+							//t3
+							texturePtr[4].mTexAttr |= (DRAWING);
+							texturePtr[2].mTexAttr &= ~(DRAWING);
+							texturePtr[3].mTexAttr &= ~(DRAWING);
+						}else{
+							//t2
+							texturePtr[3].mTexAttr |= (DRAWING);
+							texturePtr[2].mTexAttr &= ~(DRAWING);
+							texturePtr[4].mTexAttr &= ~(DRAWING);
 						}
 					}
 					else //2个阈值
 					{
-						if(value < threshold0)
+						/*if(value < threshold0)
 						{
 							curB = startB;
 							curG = startG;
 							curR = startR;
+						}*/
+						
+						texturePtr[2].TexTopTileBox = (u8)topBox;
+						
+						texturePtr[3].TexTopTileBox = (u8)topBox;
+
+						if(value < threshold0){
+							//tex1 show
+							texturePtr[2].mTexAttr |= (DRAWING);
+							texturePtr[3].mTexAttr &= ~(DRAWING);
+						}else{
+							texturePtr[2].mTexAttr &= ~(DRAWING);
+							texturePtr[3].mTexAttr |= (DRAWING);
 						}
+						
 					}
 				}
 				else //渐变
@@ -488,13 +537,16 @@ funcStatus ProgBarClass::renderTexture
 					curG += ((s16)(value - minValue) * differenceOfG) / differenceOfValue;
 					curR = startR;
 					curR += ((s16)(value - minValue) * differenceOfR) / differenceOfValue;
-
+					texturePtr[1].TexAddr &= 0xFF000000;
+					texturePtr[1].TexAddr |= curB;
+					texturePtr[1].TexAddr |= (curG << 8);
+					texturePtr[1].TexAddr |= (curR << 16);
 				}
 
-				texturePtr[1].TexAddr &= 0xFF000000;
+				/*texturePtr[1].TexAddr &= 0xFF000000;
 				texturePtr[1].TexAddr |= curB;
 				texturePtr[1].TexAddr |= (curG << 8);
-				texturePtr[1].TexAddr |= (curR << 16);
+				texturePtr[1].TexAddr |= (curR << 16);*/
 			}
 
 			if(lineFileEn)
@@ -524,7 +576,8 @@ funcStatus ProgBarClass::renderTexture
 			{
 				if(changeColorMode) //突变
 				{
-					startB = (u8)p_wptr->COLOR0GB;
+					
+					/*startB = (u8)p_wptr->COLOR0GB;
 					startG = (u8)(p_wptr->COLOR0GB >> 8);
 					startR = (u8)p_wptr->COLOR1B_COLOR0R;
 					endB = (u8)(p_wptr->COLOR2GB);
@@ -532,13 +585,24 @@ funcStatus ProgBarClass::renderTexture
 					endR = (u8)(p_wptr->COLOR2R);
 					curB = (u8)(p_wptr->COLOR1B_COLOR0R >> 8);
 					curG = (u8)(p_wptr->COLOR1RG);
-					curR = (u8)(p_wptr->COLOR1RG >> 8);
+					curR = (u8)(p_wptr->COLOR1RG >> 8);*/
 					threshold0 = p_wptr->THRESHOLD0_L + (p_wptr->THRESHOLD0_H << 8);
 					threshold1 = p_wptr->THRESHOLD1_L + (p_wptr->THRESHOLD1_H << 8);
 
+					//mask
+					texturePtr[1].TexWidth  = newWidth;
+					texturePtr[1].TexRightTileBox = (u8)rightBox;
+					texturePtr[1].mTexAttr |= (TEXTURE_USING_WIDGET_BOX);
 					if(thresholdNum) //3个阈值
 					{
-						if(value < threshold0)
+						
+						
+						texturePtr[2].TexRightTileBox = (u8)rightBox;
+						texturePtr[3].TexRightTileBox = (u8)rightBox;
+						texturePtr[4].TexRightTileBox = (u8)rightBox;
+						
+						barPtr = 4;
+						/*if(value < threshold0)
 						{
 							curB = startB;
 							curG = startG;
@@ -549,15 +613,45 @@ funcStatus ProgBarClass::renderTexture
 							curB = endB;
 							curG = endG;
 							curR = endR;
+						}*/
+						if(value < threshold0){
+							//1
+							texturePtr[2].mTexAttr |= (DRAWING);
+							texturePtr[3].mTexAttr &= ~(DRAWING);
+							texturePtr[4].mTexAttr &= ~(DRAWING);
+						}else if(value >= threshold1){
+							//3
+							texturePtr[4].mTexAttr |= (DRAWING);
+							texturePtr[2].mTexAttr &= ~(DRAWING);
+							texturePtr[3].mTexAttr &= ~(DRAWING);
+						}else{
+							//2
+							texturePtr[3].mTexAttr |= (DRAWING);
+							texturePtr[2].mTexAttr &= ~(DRAWING);
+							texturePtr[4].mTexAttr &= ~(DRAWING);
 						}
 					}
 					else //2个阈值
 					{
-						if(value < threshold0)
+						
+						texturePtr[2].TexRightTileBox = (u8)rightBox;
+						texturePtr[3].TexRightTileBox = (u8)rightBox;
+						/*texturePtr[1].mTexAttr |= (TEXTURE_USING_WIDGET_BOX);
+						texturePtr[2].mTexAttr |= (TEXTURE_USING_WIDGET_BOX);*/
+						barPtr = 3;
+						/*if(value < threshold0)
 						{
 							curB = startB;
 							curG = startG;
 							curR = startR;
+						}*/
+						if(value < threshold0){
+							//tex1 show
+							texturePtr[2].mTexAttr |= (DRAWING);
+							texturePtr[3].mTexAttr &= ~(DRAWING);
+						}else{
+							texturePtr[2].mTexAttr &= ~(DRAWING);
+							texturePtr[3].mTexAttr |= (DRAWING);
 						}
 					}
 				}
@@ -580,17 +674,22 @@ funcStatus ProgBarClass::renderTexture
 					curG += ((s16)(value - minValue) * differenceOfG) / differenceOfValue;
 					curR = startR;
 					curR += ((s16)(value - minValue) * differenceOfR) / differenceOfValue;
+
+					texturePtr[1].TexAddr &= 0xFF000000;
+					texturePtr[1].TexAddr |= curB;
+					texturePtr[1].TexAddr |= (curG << 8);
+					texturePtr[1].TexAddr |= (curR << 16);
 				}
 
-				texturePtr[1].TexAddr &= 0xFF000000;
+				/*texturePtr[1].TexAddr &= 0xFF000000;
 				texturePtr[1].TexAddr |= curB;
 				texturePtr[1].TexAddr |= (curG << 8);
-				texturePtr[1].TexAddr |= (curR << 16);
+				texturePtr[1].TexAddr |= (curR << 16);*/
 			}
 
 			if(lineFileEn)
 			{
-				if(!(p_wptr->NumOfTex == 3 || p_wptr->NumOfTex == 4 || p_wptr->NumOfTex == 5) )
+				if(!(p_wptr->NumOfTex == 3 || p_wptr->NumOfTex == 4 || p_wptr->NumOfTex == 5|| p_wptr->NumOfTex == 6) )
 					return AHMI_FUNC_FAILURE;
 				texturePtr[barPtr + 1].OffsetX = (offsetX + newWidth) << 4;
 				rightBox = (offsetX + p_wptr->WidgetWidth)/TILESIZE;
