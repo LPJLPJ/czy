@@ -166,6 +166,7 @@ funcStatus NumberClass::widgetCtrl(
 	u8 numRadix;    // 数字进制 0-十进制  1-十六进制
 	u8 markingMode; // 十六进制是否显示0x   0-显示  1-不显示
 	u8 transformMode; // 字母是否大写显示  0-小写  1-大写
+	u8 markingPos; // 标志符在纹理中的位置
 	u8 radixBase = 10;
 	u8 upperLetterOffset = 7;   // 大写字母与数字的偏移量   
 	u8 lowerLetterOffset = 39;  // 小写字母的偏移量
@@ -239,6 +240,18 @@ funcStatus NumberClass::widgetCtrl(
 
 	if(numRadix){
 		radixBase = 16;
+		if(markingMode==1){
+			numOfDisTexture +=2;
+			// 计算标识符应该在的位置
+			u32 tempValue = value;
+			u8 count = 0;
+			while (tempValue>0)
+			{
+				tempValue /=15;
+				count++;
+			}
+			markingPos = numofNumber - 1 - count;
+		}
 	}
 
 	
@@ -466,11 +479,6 @@ funcStatus NumberClass::widgetCtrl(
 	//pre
 	for(i=0;i<numofNumber;i++)
 	{
-		// 用于测试字符绘制是否准确
-		//texturePtr->FocusedSlice = '0' - 0x20;
-		//// tens /= radixBase;
-		//texturePtr++;
-		//continue;
 
 		if(sign)
 		{
@@ -519,15 +527,16 @@ funcStatus NumberClass::widgetCtrl(
 			signFlag = 1;
 			i++;
 		}
-		
-		if(numRadix==1 && markingMode==1 && i==0)
-		{
-			texturePtr->FocusedSlice = '0' - 0x20;
+	
+
+		if(numRadix==1&&markingMode==1&&i==markingPos){
+
+			texturePtr->FocusedSlice = 'X' - 0x20;
 			tens /= radixBase;
 			texturePtr++;
 			continue;
-		}else if(numRadix && markingMode==1 && i==1){
-			texturePtr->FocusedSlice = 'X' - 0x20;
+		}else if(numRadix==1&&markingMode==1&&i==(markingPos-1)){
+			texturePtr->FocusedSlice = '0' - 0x20;
 			tens /= radixBase;
 			texturePtr++;
 			continue;
