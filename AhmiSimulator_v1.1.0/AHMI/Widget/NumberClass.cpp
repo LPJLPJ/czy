@@ -168,7 +168,7 @@ funcStatus NumberClass::widgetCtrl(
 	u8 transformMode; // 字母是否大写显示  0-小写  1-大写
 	u8 radixBase = 10;
 	u8 upperLetterOffset = 7;   // 大写字母与数字的偏移量   
-	u8 lowerLetterOffset = 21;  // 小写字母的偏移量
+	u8 lowerLetterOffset = 39;  // 小写字母的偏移量
 
 	u64 tens;
 	TextureClassPtr nextTexturePtr, texturePtr;
@@ -466,6 +466,11 @@ funcStatus NumberClass::widgetCtrl(
 	//pre
 	for(i=0;i<numofNumber;i++)
 	{
+		// 用于测试字符绘制是否准确
+		//texturePtr->FocusedSlice = '0' - 0x20;
+		//// tens /= radixBase;
+		//texturePtr++;
+		//continue;
 
 		if(sign)
 		{
@@ -513,6 +518,19 @@ funcStatus NumberClass::widgetCtrl(
 			texturePtr++;
 			signFlag = 1;
 			i++;
+		}
+		
+		if(numRadix==1 && markingMode==1 && i==0)
+		{
+			texturePtr->FocusedSlice = '0' - 0x20;
+			tens /= radixBase;
+			texturePtr++;
+			continue;
+		}else if(numRadix && markingMode==1 && i==1){
+			texturePtr->FocusedSlice = 'X' - 0x20;
+			tens /= radixBase;
+			texturePtr++;
+			continue;
 		}
 
 		//显示小数点
