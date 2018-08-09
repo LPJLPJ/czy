@@ -163,6 +163,13 @@ funcStatus NumberClass::widgetCtrl(
 	u8 overflow;
 	u8 align;
 	u8 overflowStyle;    //数据超出最大值后的处理方式 0：显示最大值，模式方式 1：不显示数据
+	u8 numRadix;    // 数字进制 0-十进制  1-十六进制
+	u8 markingMode; // 十六进制是否显示0x   0-显示  1-不显示
+	u8 transformMode; // 字母是否大写显示  0-小写  1-大写
+	u8 markingPos; // 标志符在纹理中的位置
+	u8 radixBase = 10;
+	u8 upperLetterOffset = 7;   // 大写字母与数字的偏移量   
+	u8 lowerLetterOffset = 39;  // 小写字母的偏移量
 
 	u64 tens;
 	TextureClassPtr nextTexturePtr, texturePtr;
@@ -226,12 +233,27 @@ funcStatus NumberClass::widgetCtrl(
 	lowAlarmValue  = (s32)((p_wptr->LowAlarmValueH  << 16) + p_wptr->LowAlarmValueL );
 	highAlarmValue = (s32)((p_wptr->HighAlarmValueH << 16) + p_wptr->HighAlarmValueL);
 
-	//numOfDisTexture = pointPosRight;
-	//nextNumOfDisTexture = pointPosRight;
 
-//	texID = p_wptr->StartNumofTex;
+	numRadix =  (u8)(p_wptr->HexControl& 0x000f);
+	markingMode = (u8)((p_wptr->HexControl & 0x00f0)>>4);
+	transformMode = (u8)((p_wptr->HexControl & 0x0f00)>>8);
 
-	//taskENTER_CRITICAL();
+	if(numRadix){
+		radixBase = 16;
+		if(markingMode==1){
+			numOfDisTexture +=2;
+			// 计算标识符应该在的位置
+			u32 tempValue = value;
+			u8 count = 0;
+			while (tempValue>0)
+			{
+				tempValue /=15;
+				count++;
+			}
+			markingPos = numofNumber - 1 - count;
+		}
+	}
+
 	
 	if(sign)
 	{
@@ -266,11 +288,7 @@ funcStatus NumberClass::widgetCtrl(
 		p_wptr->CurValueL = (u16)value;
 		p_wptr->CurValueH = (u16)(value >> 16);
 	}
-	//else if(animationExist && (p_wptr->TOTALFRAME_AND_NOWFRAME & 0xff) == 0)
-	//{
-	//	p_wptr->CurValueL = (u16)value;
-	//	p_wptr->CurValueH = (u16)(value >> 16);
-	//}
+
 	if((p_wptr->NumOfLine & 0xff) == 0 || (p_wptr->NumOfLine & 0xff) == 1) //no animation
 		curValue = value;
 	else
@@ -327,7 +345,8 @@ funcStatus NumberClass::widgetCtrl(
 
 
 	for(i=0;i<numofNumber;i++) 
-		tens *=10;
+		//tens *=10;
+		tens *= radixBase;
 
 	pointPosLeft = numofNumber - pointPosRight;//小数点左边的字符数，包括符号
 
@@ -383,7 +402,8 @@ funcStatus NumberClass::widgetCtrl(
 	sValue[0] = (s32)value;
 	uValue[1] = (u32)curValue;
 	sValue[1] = (s32)curValue;
-//bug donghua 
+
+    //bug 动画
 	if((p_wptr->NumOfLine & 0xff) == 2) {
 		if(sign)
 		{
@@ -448,42 +468,11 @@ funcStatus NumberClass::widgetCtrl(
 		
 	}
 
-	//if(sign)
-	//	numOfDisTexture++;//显示的纹理数
-
-	//p_wptr->CurValueL = (u16)uValue[0];
-	//p_wptr->CurValueH = (u16)(uValue[0] >> 16);
-
-
 	// 截断超过显示范围的数字
 	uValue[1] = uValue[1] % tens;
 	sValue[1] = sValue[1] % tens;
-	tens /= 10;
-
-	//if(leadZero == 0)
-	//{
-	//	//only one number before zero
-	//	numOfDisTexture++; 
-	//	nextNumOfDisTexture++;
-	//	if(dataMinus)
-	//	{
-	//		sValue[1] = sValue[0];
-	//		while((sValue[1] / 10) != 0)
-	//		{
-	//			numOfDisTexture++;
-	//			sValue[1] /= 10;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		uValue[1] = uValue[0];
-	//		while((uValue[1] / 10) != 0)
-	//		{
-	//			numOfDisTexture++;
-	//			uValue[1] /= 10;
-	//		}
-	//	}
-	//}
+	// tens /= 10;
+	tens /= radixBase;
 	
 
 	//操作纹理的值
@@ -538,6 +527,20 @@ funcStatus NumberClass::widgetCtrl(
 			signFlag = 1;
 			i++;
 		}
+	
+
+		if(numRadix==1&&markingMode==1&&i==markingPos){
+
+			texturePtr->FocusedSlice = 'X' - 0x20;
+			tens /= radixBase;
+			texturePtr++;
+			continue;
+		}else if(numRadix==1&&markingMode==1&&i==(markingPos-1)){
+			texturePtr->FocusedSlice = '0' - 0x20;
+			tens /= radixBase;
+			texturePtr++;
+			continue;
+		}
 
 		//显示小数点
 		if(i == pointPosLeft)
@@ -567,12 +570,24 @@ funcStatus NumberClass::widgetCtrl(
 		}
 		else
 		{
+			if(code>9){
+				// 十六进制显示
+				if(numRadix==1){
+					if(transformMode==0){
+						code += lowerLetterOffset;
+					}else if(transformMode ==1){
+						code += upperLetterOffset;
+					}
+				}
+			}
 			code = code + 0x30/*ASIIC中数字的起始位置*/ - 0x20/*去掉前面控制符*/;
+
 			showingZero = 1;
 		}
-		tens =tens /10;
+		// tens =tens /10;
+		tens /= radixBase;
 		if(overflow == 1)
-			texturePtr->FocusedSlice = ' ' - 0x20;
+			texturePtr->FocusedSlice = ' ' - 0x20; 
 		else
 			texturePtr->FocusedSlice = code;
 		texturePtr++;
@@ -586,7 +601,6 @@ funcStatus NumberClass::widgetCtrl(
 		showingZero = 0;
 		numofNumber = (p_wptr->WidgetAttr >>5) & 0xf;
 
-		
 
 		for(i=0;i<numofNumber;i++) 
 			tens *=10;
@@ -677,8 +691,6 @@ funcStatus NumberClass::widgetCtrl(
 				i++;
 			}
 
-
-
 			//显示前导零
 			if (!showingZero && code == 0 && !leadZero && (i != pointPosLeft - 1))
 				//   不显示0        当前数字为0   不显示前导零   未到达小数点前一位数
@@ -704,11 +716,6 @@ funcStatus NumberClass::widgetCtrl(
 			nextTexturePtr++;
 		}
 	}
-
-	//if(leadZero == 1)
-	//{
-	//	numOfDisTexture = numofNumber;
-	//}
 
 	texturePtr = texturePtr - numofNumber;
 	if((p_wptr->NumOfLine & 0xff) == 2) //with animation
@@ -761,21 +768,13 @@ funcStatus NumberClass::widgetCtrl(
 	{
 		
 		texturePtr[i].OffsetX = ((s16)p_wptr->WidgetOffsetX) << 4;
-		//////////////offetpoint为小数点位置
-		//////////////20161017 add by chenxianjie
-		//if(offsetpoint != 0)
-		//if(i >=(offsetpoint +1))
-		//	texturePtr[i].OffsetX += widthOfFont * i;
-		//else
-		//	texturePtr[i].OffsetX += (widthOfFont * i + widthOfFont*2/3 );
-		//
-		//else
+		// offetpoint为小数点位置
 		if(i <= pointPosLeft)
 			texturePtr[i].OffsetX += widthOfFont * i;
 		else 
 			texturePtr[i].OffsetX += widthOfFont * i - (widthOfFont + 1)/2 + SpacingX/2* 16;
 		texturePtr[i].OffsetX -= shiftSize;
-		//if( (texturePtr[i].OffsetX + (widthOfFont) ) < 0 || (texturePtr[i].FocusedSlice == 0)  )
+
 		if(texturePtr[i].FocusedSlice == 0) //初始位置不在页面内，但动画后在页面内需要显示 by Mr.z
 		{
 			texturePtr[i].mTexAttr &= (~DRAWING);
@@ -819,21 +818,12 @@ funcStatus NumberClass::widgetCtrl(
 		for(i=0;i<numofNumber;i++)
 		{
 			nextTexturePtr[i].OffsetX = ((s16)p_wptr->WidgetOffsetX) << 4;
-			//////////////offetpoint为小数点位置
-			//////////////20161017 add by chenxianjie
-			//if(offsetpoint != 0)
-			//	if(i >=(offsetpoint +1))
-			//		nextTexturePtr[i].OffsetX += widthOfFont * i << 4;
-			//	else
-			//		nextTexturePtr[i].OffsetX += (widthOfFont * i + widthOfFont*2/3 ) << 4;
-			//
-			//else
+			//offetpoint为小数点位置
 			if(i <= pointPosLeft)
 				nextTexturePtr[i].OffsetX += widthOfFont * i;
 			else 
 				nextTexturePtr[i].OffsetX += widthOfFont * i - (widthOfFont + 1)/2+ SpacingX/2* 16;;
 			nextTexturePtr[i].OffsetX -= shiftSize;
-			//if( (nextTexturePtr[i].OffsetX + (widthOfFont ) ) < 0 || (nextTexturePtr[i].FocusedSlice == 0)  )
 			if(nextTexturePtr[i].FocusedSlice == 0) //初始位置不在页面内，但动画后在页面内需要显示 by Mr.z
 			{
 				nextTexturePtr[i].mTexAttr &= (~DRAWING);

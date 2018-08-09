@@ -119,6 +119,8 @@
 #define SPACINGX							WDG_u16_userVariables[WIDGET_GENERAL_NUM + 14]       //数字间距 SpacingX                                                
 #define ANIMATIONCURVALUE_L					WDG_u16_userVariables[WIDGET_GENERAL_NUM + 15]       //仪表盘或者进度条中动画执行的当前值 by Mr.z
 #define ANIMATIONCURVALUE_H					WDG_u16_userVariables[WIDGET_GENERAL_NUM + 16]       //仪表盘或者进度条中动画执行的当前值 by Mr.z 
+#define HexControl                          WDG_u16_userVariables[WIDGET_GENERAL_NUM + 17]       // 十六进制控制，每四位代表一个标志位。依次为是否启用16进制，是否显示前导0x，是否大写字母
+
 //文本框专用参数 数字框专用参    数                            
                                                
 
