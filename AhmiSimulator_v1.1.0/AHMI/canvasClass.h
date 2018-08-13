@@ -22,6 +22,8 @@
 
 #ifdef AHMI_CORE
 
+extern TagClassPtr			TagPtr;
+
 class matrixClass;
 
 class CanvasClass

@@ -26,13 +26,21 @@ class AnimationActionClass
 {
 public:
 	s16 mStartX;                   //start point x 11.4
+	u8  mStartXTag;
 	s16 mStartY;                   //start point y 11.4
+	u8 mStartYTag;
 	s16 mStopX;					   //stop point x  11.4
+	u8  mStopXTag;
 	s16 mStopY;                    //stop point y  11.4
-	u16 mWidthBeforeAnimation;     //width before  6.10
-	u16 mHeightBeforeAnimation;    //height before 6.10
-	u16 mWidthAfterAnimation;      //width after   6.10
-	u16 mHeightAfterAnimation;     //height after  6.10
+	u8  mStopYTag;
+	u16 mWidthBeforeAnimation;     //width before  整数 6.10
+	u8  mWidthBeforeAnimationTag;
+	u16 mHeightBeforeAnimation;    //height before 整数
+	u8  mHeightBeforeAnimationTag;
+	u16 mWidthAfterAnimation;      //width after   整数
+	u8  mWidthAfterAnimationTag;
+	u16 mHeightAfterAnimation;     //height after  整数
+	u8  mHeightAfterAnimationTag;
 	u8  mTotalFrame;               //animation frame
 	u8  mAnimationDirection;       //direction, 0 is add and 1 is minus
 	u8  mAnimationID ;             //animation ID, only when tag and id is correct will the animation be triggered

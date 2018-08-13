@@ -412,6 +412,25 @@ taskEXIT_CRITICAL();
 
 }
 
+s16 getTranslateAttrValue(s16 mTranslate,u8 mTranslateTag){
+	if(mTranslateTag!=0){
+		//tag exists
+		TagClassPtr curTag = &TagPtr[mTranslateTag];
+		return (s16)curTag->getValue();
+	}else{
+		return mTranslate;
+	}
+}
+
+u16 getScaleAttrValue(u16 mScale,u8 mScaleTag){
+	if(mScaleTag!=0){
+		//tag exists
+		TagClassPtr curTag = &TagPtr[mScaleTag];
+		return (u16)curTag->getValue();
+	}else{
+		return mScale;
+	}
+}
 
 
 //-----------------------------
@@ -436,6 +455,15 @@ funcStatus CanvasClass::triggerAnimation(u8 animationID)
 		if(curAnimationAction->mAnimationID == animationID)
 		{
 			curCustomAnimationPtr = i;
+			//set animation value with tags
+			curAnimationAction->mStartX = getTranslateAttrValue(curAnimationAction->mStartX,curAnimationAction->mStartXTag);
+			curAnimationAction->mStopY = getTranslateAttrValue(curAnimationAction->mStartY,curAnimationAction->mStartYTag);
+			curAnimationAction->mStopX = getTranslateAttrValue(curAnimationAction->mStopX,curAnimationAction->mStopXTag);
+			curAnimationAction->mStopY = getTranslateAttrValue(curAnimationAction->mStopY,curAnimationAction->mStopYTag);
+			curAnimationAction->mWidthBeforeAnimation = getScaleAttrValue(curAnimationAction->mWidthBeforeAnimation,curAnimationAction->mWidthBeforeAnimationTag);
+			curAnimationAction->mHeightBeforeAnimation = getScaleAttrValue(curAnimationAction->mHeightBeforeAnimation,curAnimationAction->mHeightBeforeAnimationTag);
+			curAnimationAction->mWidthAfterAnimation = getScaleAttrValue(curAnimationAction->mWidthAfterAnimation,curAnimationAction->mWidthAfterAnimationTag);
+			curAnimationAction->mHeightAfterAnimation = getScaleAttrValue(curAnimationAction->mHeightAfterAnimation,curAnimationAction->mHeightAfterAnimationTag);
 			return gAnimationClass.Create_AnimatianData(ANIMATION_REFRESH_CANVAS, curPtr, curPtr);
 		}
 	}
