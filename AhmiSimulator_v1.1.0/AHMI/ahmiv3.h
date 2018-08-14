@@ -36,12 +36,12 @@ extern u16 gScreenHeight;
 extern u8           TextureBuffer[TEXBUFSIZE];
 
 typedef struct _Matrix{
-	short A;
-	short B;
-	short C;
-	short D;
-	short E;
-	short F;
+	s32 A;
+	s32 B;
+	s32 C;
+	s32 D;
+	s32 E;
+	s32 F;
 } Matrix;
 
 typedef u8 StructFrameBuffer;

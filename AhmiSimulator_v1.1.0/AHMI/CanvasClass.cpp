@@ -76,27 +76,6 @@ funcStatus CanvasClass::drawCanvas(
 	curPtr.scptr = scptr;
 	drawingCanvasTileBox.sourceReCompute(curPtr, ANIMATION_REFRESH_CANVAS, &(curCanvasMatrix) );
 
-	//s8 drawingCanvasLeftBox   = (( (s16)(this->moffsetX)  )>>5);
-	//s8 drawingCanvasRightBox  = (( ( (s16)(this->moffsetX + this->mwidth) )>>5) );
-	//s8 drawingCanvasTopBox    = (( (s16) (this->moffsetY)   )>>5);
-	//s8 drawingCanvasButtomBox = (( ( (s16)(this->moffsetY + this->mheight) )>>5) );
-	
-	//compute whether the source box is overlapped
-	//if(drawingCanvasLeftBox < 0)
-	//	drawingCanvasLeftBox = 0;
-	//if(drawingCanvasTopBox < 0)
-	//	drawingCanvasTopBox = 0;
-	//if(drawingCanvasRightBox >  (s8)(TILE_NUM_X - 1) )
-	//	drawingCanvasRightBox = (s8)(TILE_NUM_X - 1) ;
-	//if(drawingCanvasButtomBox > (s8)(TILE_NUM_Y - 1) )
-	//	drawingCanvasButtomBox = (s8)(TILE_NUM_Y - 1) ;
-	//判断包围盒
-	//if(
-	//	pTileBox->LeftBox   > drawingCanvasRightBox     ||
-	//	pTileBox->TopBox    > drawingCanvasButtomBox    ||
-	//	pTileBox->RightBox  < drawingCanvasLeftBox	    ||
-	//	pTileBox->ButtomBox < drawingCanvasTopBox
-	//)
 	if(drawingCanvasTileBox.sourceBoxOverlap(pTileBox) == AHMI_FUNC_FAILURE) //no overlap
 		return AHMI_FUNC_SUCCESS;
 	//写一个画布中所有控件
@@ -338,8 +317,8 @@ funcStatus CanvasClass::setATag(u8 value)
 	s16 curCanvasOffsetY; //1.11.4
 	s32 curWidth;     //1.21.10
 	s32 curHeight;    //1.21.10
-	u32 scalerX;     //1.6.9
-	u32 scalerY;     //1.6.9
+	s32 scalerX;     //1.6.9
+	s32 scalerY;     //1.6.9
 	u16 transitionParamIn; //0.10
 	u16 transitionParamOut; //0.10
 #if(defined PARTIAL_DOUBLE_BUFFER) || (defined STATIC_BUFFER_EN) || (defined PARTIAL_TRIBLE_BUFFER)
@@ -385,22 +364,22 @@ taskENTER_CRITICAL();
 		curWidth = 1;
 	if(curHeight == 0)
 		curHeight = 1;
-	scalerX = 1024 * 512 / curWidth   ; //trans into 1.6.9
-	scalerY = 1024 * 512 / curHeight  ; //trans into 1.6.9
-	if(scalerX > 0x8000)
-		scalerX = 0x7999; //the maxium
+	scalerX = (((long long)1024 * 512 / curWidth ) << 11)  ; //trans into 1.11.20
+	scalerY = (((long long)1024 * 512 / curHeight ) << 11) ; //trans into 1.11.20
+	if(scalerX > 0x100000000)
+		scalerX = 0xfffffff; //the maxium
 	else if(scalerX == 0)
 		scalerX = 1;
-	if(scalerY > 0x8000)
-		scalerY = 0x7999; //the maxium
+	if(scalerY > 0x100000000)
+		scalerY = 0xfffffff; //the maxium
 	else if(scalerY == 0)
 		scalerY = 1;
 	this->mCanvasMatrix.A = scalerX;
 	this->mCanvasMatrix.B = 0;
 	this->mCanvasMatrix.C = 0;
 	this->mCanvasMatrix.D = scalerY;
-	this->mCanvasMatrix.E = -(curCanvasOffsetX - (this->moffsetX * 16) );
-	this->mCanvasMatrix.F = -(curCanvasOffsetY - (this->moffsetY * 16) );
+	this->mCanvasMatrix.E = -((curCanvasOffsetX - (this->moffsetX * 16) ) << 9);
+	this->mCanvasMatrix.F = -((curCanvasOffsetY - (this->moffsetY * 16) ) << 9);
 taskEXIT_CRITICAL();
 #ifndef WHOLE_TRIBLE_BUFFER
 	refreshMsg.mElementType = ANIMATION_REFRESH_CANVAS;
@@ -457,12 +436,12 @@ funcStatus CanvasClass::triggerAnimation(u8 animationID)
 //-----------------------------
 funcStatus CanvasClass::computeCanvasMatrix(matrixClassPtr pPageMatrix, matrixClassPtr curCanvasMatrix)
 {
-	curCanvasMatrix->A = (s32)(pPageMatrix->A * curCanvasMatrix->A + pPageMatrix -> B * curCanvasMatrix->C  ) / 512;
-	curCanvasMatrix->B = (s32)(pPageMatrix->A * curCanvasMatrix->B + pPageMatrix -> B *curCanvasMatrix->D  ) / 512;
-	curCanvasMatrix->C = (s32)(pPageMatrix->C * curCanvasMatrix->A + pPageMatrix -> D *curCanvasMatrix->C  ) / 512;
-	curCanvasMatrix->D = (s32)(pPageMatrix->C * curCanvasMatrix->B + pPageMatrix -> D *curCanvasMatrix->D  ) / 512;
-	curCanvasMatrix->E = pPageMatrix->E + ( (curCanvasMatrix->E - (this->moffsetX * 16) ) * 512 / pPageMatrix->A) + this->moffsetX * 16; //在绝对坐标系下，canvas相对于本身的偏移
-	curCanvasMatrix->F = pPageMatrix->F + ( (curCanvasMatrix->F - (this->moffsetY * 16) ) * 512 / pPageMatrix->A) + this->moffsetY * 16; 
+	curCanvasMatrix->A = (s32)( ((long long)pPageMatrix->A * curCanvasMatrix->A + (long long)pPageMatrix -> B * curCanvasMatrix->C  ) / (1024*1024) );
+	curCanvasMatrix->B = (s32)( ((long long)pPageMatrix->A * curCanvasMatrix->B + (long long)pPageMatrix -> B *curCanvasMatrix->D  ) / (1024*1024)  );
+	curCanvasMatrix->C = (s32)( ((long long)pPageMatrix->C * curCanvasMatrix->A + (long long)pPageMatrix -> D *curCanvasMatrix->C  ) / (1024*1024)  );
+	curCanvasMatrix->D = (s32)( ((long long)pPageMatrix->C * curCanvasMatrix->B + (long long)pPageMatrix -> D *curCanvasMatrix->D  ) / (1024*1024)  );
+	curCanvasMatrix->E = pPageMatrix->E + ( (long long)(curCanvasMatrix->E - (this->moffsetX * 16) ) * 1024 * 1024 / pPageMatrix->A) + this->moffsetX * 16; //在绝对坐标系下，canvas相对于本身的偏移
+	curCanvasMatrix->F = pPageMatrix->F + ( (long long)(curCanvasMatrix->F - (this->moffsetY * 16) ) * 1024 * 1024 / pPageMatrix->A) + this->moffsetY * 16; 
 	return AHMI_FUNC_SUCCESS;
 }
 

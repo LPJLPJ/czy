@@ -308,7 +308,7 @@ void LoadTextureToSDRAM	(void* INbuffer,u32 bufsize, int size)
 		ERROR_PRINT("There is no enough data to load texture.\r\n");
 	}
 
-		fp1 = fopen("spidata.hex","w");
+	fp1 = fopen("spidata.hex","w");
 	fp2 = fopen("spidata_even.hex", "w");
 	fp3 = fopen("spidata_odd.hex", "w");
 	for(i=0;i<size;i++)

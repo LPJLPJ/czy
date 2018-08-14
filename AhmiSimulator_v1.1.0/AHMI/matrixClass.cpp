@@ -40,11 +40,11 @@ funcStatus matrixClass::matrixMulti(
 	)
 {
 	 matrixClass matrixTemp;
-	 matrixTemp.A = (pM->A * this->A + pM -> B * this->C  ) >> 9;
-	 matrixTemp.B = (pM->A * this->B + pM -> B * this->D  ) >> 9;
+	 matrixTemp.A = ((long long)pM->A * this->A + (long long)pM -> B * this->C ) >> 20;
+	 matrixTemp.B = ((long long)pM->A * this->B + (long long)pM -> B * this->D ) >> 20;
 	 matrixTemp.E = this->E +  pM->E ;
-	 matrixTemp.C = (pM->C * this->A + pM -> D * this->C ) >> 9;
-	 matrixTemp.D = (pM->C * this->B + pM -> D * this->D ) >> 9;
+	 matrixTemp.C = ((long long)pM->C * this->A + (long long)pM -> D * this->C ) >> 20;
+	 matrixTemp.D = ((long long)pM->C * this->B + (long long)pM -> D * this->D ) >> 20;
 	 matrixTemp.F = this->F + pM->F;
 	 this->A = matrixTemp.A;
 	 this->B = matrixTemp.B;
@@ -57,10 +57,10 @@ funcStatus matrixClass::matrixMulti(
 
 funcStatus matrixClass::matrixInit(void)
 {
-	this->A = (1<<9);
+	this->A = (1<<20);//1.11.20
 	this->B = 0;
 	this->C = 0;
-	this->D = (1<<9);
+	this->D = (1<<20);//1.11.20
 	this->E = 0;
 	this->F = 0;
 	return AHMI_FUNC_SUCCESS;
@@ -115,8 +115,13 @@ PointClass::PointClass(s32 x, s32 y)
 funcStatus PointClass::leftMulMatrix(matrixClassPtr pMatrix)
 {
 	s32 pointX, pointY;
-	pointX = ((pMatrix->A * (this->mPointX+ pMatrix->E) ) >> 9) + ((pMatrix->C * (this->mPointY+ pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
-	pointY = ((pMatrix->B * (this->mPointX+ pMatrix->E) ) >> 9) + ((pMatrix->D * (this->mPointY+ pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
+#if 0
+	pointX = ((pMatrix->A * (this->mPointX + pMatrix->E) ) >> 9) + (pMatrix->C * ((this->mPointY + pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
+	pointY = ((pMatrix->B * (this->mPointX + pMatrix->E) ) >> 9) + (pMatrix->D * ((this->mPointY + pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
+#else
+	pointX = (((long long)pMatrix->A * (this->mPointX + (pMatrix->E >> 16)) ) >> 20) + (((long long)pMatrix->C * (this->mPointY + (pMatrix->F >> 16))) >> 20);//4位小数位,先平移再旋转
+	pointY = (((long long)pMatrix->B * (this->mPointX + (pMatrix->E >> 16)) ) >> 20) + (((long long)pMatrix->D * (this->mPointY + (pMatrix->F >> 16))) >> 20);//4位小数位,先平移再旋转
+#endif
 	this->mPointX = pointX;
 	this->mPointY = pointY;
 	return AHMI_FUNC_SUCCESS;
@@ -153,12 +158,12 @@ funcStatus PointClass::pointRotating(
 	s16 RotateAngle//1.6.9，纹理旋转角度，度表示，顺时针为正
 	)
 {
-	s16 para1,para2;
+	s32 para1,para2;
 	myMathClass myMath;
 	matrixClass matrixTemp;
-	para1 = 512; //cos
+	para1 = 0x100000; //cos
 	para2 = 0;   //sin
-	myMath.CORDIC(RotateAngle,&para1,&para2);//先计算旋转的正矩阵
+	myMath.CORDIC_32(RotateAngle,&para1,&para2);//先计算旋转的正矩阵
 	matrixTemp.A = para1;
 	matrixTemp.C = -para2;
 	matrixTemp.B = para2;

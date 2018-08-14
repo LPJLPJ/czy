@@ -555,9 +555,6 @@ funcStatus drawimmediately(RefreshMsg* refreshMsg)
 		return AHMI_FUNC_FAILURE;
 	}
 
-
-	
-
 	//写入背景
 	taskENTER_CRITICAL();
 //	if(refreshMsg->mElementType == ANIMAITON_REFRESH_STATIC_BUFFER && animationExist == 0) //更新静态buffer，地址为静态buffer地址
@@ -612,10 +609,6 @@ funcStatus drawimmediately(RefreshMsg* refreshMsg)
 	}
 
 	AHMI_draw(&sourceshift);
-	
-
-
-
 	
 	return AHMI_FUNC_SUCCESS;
 }

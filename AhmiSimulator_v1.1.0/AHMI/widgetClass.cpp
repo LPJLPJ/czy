@@ -105,6 +105,8 @@ funcStatus WidgetClass::drawWidget(
 	//	pTileBox->RightBox  < drawingTexLeftBox	     ||
 	//	pTileBox->ButtomBox < drawingTexTopBox
 	//)
+
+	int  ret = widgetTileBox.sourceBoxOverlap(pTileBox);
 	if(widgetTileBox.sourceBoxOverlap(pTileBox) != AHMI_FUNC_SUCCESS)
 	{
 		//if(RefreshType == ANIMATION_REFRESH_PAGE)

@@ -25,6 +25,7 @@ class myMathClass
 public:
 	void CORDIC(s32 Radian, s16* COS, s16 *SIN);
 	void CORDIC_ANGLE(u16* Radian, s16 COS, s16 SIN);
+	void CORDIC_32(s32 s32_Radian, s32* s32p_COS, s32 *s32p_SIN);
 	void MatrixRotate(s16 degrees, s32 ipointmatrix[]);
 	void MatrixScaler(s16 ScaleX, s16 ScaleY, s32 ipointmatrix[]);
 	void MatrixShearX(s16 degrees,s32 ipointmatrix[]);

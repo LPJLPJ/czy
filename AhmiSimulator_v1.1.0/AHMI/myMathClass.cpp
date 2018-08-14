@@ -169,6 +169,104 @@ void myMathClass::CORDIC(s32 s32_Radian, s16* s32p_COS, s16 *s32p_SIN)
 		}
 	}
 }
+void myMathClass::CORDIC_32(s32 s32_Radian, s32* s32p_COS, s32 *s32p_SIN)
+{
+	s16 s16_Angle[12] = { 5760, 3400 ,1797 ,912 , 458, 229, 115, 57, 29, 14, 7,4 };             //cordic角度精度为9.7
+	s16 s16_para[12] = { 1448, 1295, 1257, 1247, 1244, 1244, 1244, 1244, 1244, 1244, 1244,1244};    //cos@的结果乘以2048
+	s32 s32_x, s32_y;
+	s32 s32_count_i;
+	s32 s32_coeffX = 0, s32_coeffY = 0;
+	//float f_realAngle = 0;
+	s32_x = *s32p_COS;
+	s32_y = *s32p_SIN;
+	unsigned long long temp;
+	s16 sign;
+	while (s32_Radian >= 360 * 16)
+		s32_Radian = s32_Radian - 360 * 16;
+	while (s32_Radian < 0)
+		s32_Radian = s32_Radian + 360 * 16;
+	if (s32_Radian == 0)
+	{
+		*s32p_COS = s32_x;
+		*s32p_SIN = s32_y;
+	}
+	else if(s32_Radian == 180 * 16)
+	{
+		*s32p_COS = -s32_x;
+		*s32p_SIN = -s32_y;
+	}
+	else if (s32_Radian == 90 * 16)
+	{
+		*s32p_COS = -s32_y;
+		*s32p_SIN = s32_x;
+	}
+	else if(s32_Radian == 270 * 16)
+	{
+		*s32p_COS = s32_y;
+		*s32p_SIN = -s32_x;
+	}
+	else
+	{
+		if (s32_Radian > 0 && s32_Radian < 90 * 16)
+		{
+			s32_coeffX = 1, s32_coeffY = 1;
+		}
+		else if (s32_Radian > 90 * 16 && s32_Radian < 180 * 16) //旋转角度至第二象限，可以把目标角度沿s32_y轴镜像，使得旋转发生在第一象限内。完成旋转后，再镜像s32_x的值
+		{
+			s32_Radian =180 * 16 - s32_Radian ; // 角度沿s32_y轴镜像
+			s32_coeffX = -1, s32_coeffY = 1; //镜像X值
+		}
+		else if (s32_Radian > 180 * 16 && s32_Radian < 270 * 16) //旋转角度至第三象限，可以把目标角度沿圆点镜像，使得旋转发生在第一象限内。完成旋转后，再镜像s32_x,s32_y的值
+		{
+			s32_Radian = s32_Radian - 180 * 16;// 角度沿原点镜像
+			s32_coeffX = -1, s32_coeffY = -1;//镜像s32_x,s32_y的值
+		}
+		else if (s32_Radian > 270 * 16 && s32_Radian < 360 * 16) //旋转角度至第四象限，可以把目标角度沿s32_x轴镜像，使得旋转发生在第一象限内。完成旋转后，再镜像s32_y的值
+		{
+			s32_Radian = 360 * 16 - s32_Radian; // 角度沿s32_x轴镜像
+			s32_coeffX = 1, s32_coeffY = -1;//镜像s32_y的值
+		}
+		s32_Radian = s32_Radian << 3;// 将1.11.4扩展至1.9.7
+		for (s32_count_i = 0; s32_count_i < 12; s32_count_i++)
+		{
+			if (s32_Radian>0)      //大于0表示，在目标角度下面，要继续逆时针旋转，小于0表示目标角度上面，要回转
+			{
+				s32_Radian = s32_Radian - s16_Angle[s32_count_i];
+				*s32p_COS = (s32_x - (s32_y >> s32_count_i));
+				*s32p_SIN = (s32_y + (s32_x >> s32_count_i));
+				s32_x = *s32p_COS;
+				s32_y = *s32p_SIN;
+			}
+			else if (s32_Radian < 0)
+			{
+				s32_Radian = s32_Radian + s16_Angle[s32_count_i];
+				*s32p_COS = (s32_x + (s32_y >> s32_count_i));
+				*s32p_SIN = (s32_y - (s32_x >> s32_count_i));
+				s32_x = *s32p_COS;
+				s32_y = *s32p_SIN;
+			}
+			if ((s32_Radian >-2 && s32_Radian < 2 ) || s32_count_i ==11)
+			{
+				temp = (unsigned long long)(*s32p_COS)*s16_para[s32_count_i]; //防止符号位越位
+				if(*s32p_COS < 0)
+					sign = -1;
+				else 
+					sign = 1;
+				*s32p_COS = (s32)( s32_coeffX * (sign * temp / 2048));
+				
+				temp = (unsigned long long)(*s32p_SIN)*s16_para[s32_count_i];
+				if(*s32p_SIN < 0)
+					sign = -1;
+				else 
+					sign = 1;
+				*s32p_SIN = (s32)( s32_coeffY * (sign * temp / 2048));
+
+				//*s32p_SIN = (s32)((long long)(s32_coeffY*(*s32p_SIN)*s16_para[s32_count_i])>>11);
+				break;
+			}
+		}
+	}
+}
 //****************************
 //逆矩阵的旋转变换，顺时针为正方向，只考虑2阶的部分
 //| s32_ipointmatrix[0],s32_ipointmatrix[1] |  \/  | cos(theta),-sin(theth)|
@@ -176,17 +274,17 @@ void myMathClass::CORDIC(s32 s32_Radian, s16* s32p_COS, s16 *s32p_SIN)
 //****************************
 void myMathClass::MatrixRotate(s16 s16_degrees,s32 s32_ipointmatrix[])
 {
-	s16 cos = 1024, sin = 0;u8 i;
+	s32 cos = 1024*1024, sin = 0;u8 i;
 	//cos求出的值为扩大1024倍的值
 	s32 s32_currentmatrix[9];
-	CORDIC(s16_degrees, &cos, &sin);
+	CORDIC_32(s16_degrees, &cos, &sin);
 	
 	for ( i = 0; i < 4; i++)
 		s32_currentmatrix[i] = s32_ipointmatrix[i];
-	s32_ipointmatrix[0] = (s32_currentmatrix[0]*cos + s32_currentmatrix[1]*sin) >> 10; 
-	s32_ipointmatrix[1] = (s32_currentmatrix[1]*cos - s32_currentmatrix[0]*sin) >> 10;
-	s32_ipointmatrix[2] = (s32_currentmatrix[2]*cos + s32_currentmatrix[3]*sin) >> 10;
-	s32_ipointmatrix[3] = (s32_currentmatrix[3]*cos - s32_currentmatrix[2]*sin) >> 10;
+	s32_ipointmatrix[0] = ((long long)s32_currentmatrix[0]*cos + (long long)s32_currentmatrix[1]*sin) >> 20; 
+	s32_ipointmatrix[1] = ((long long)s32_currentmatrix[1]*cos - (long long)s32_currentmatrix[0]*sin) >> 20;
+	s32_ipointmatrix[2] = ((long long)s32_currentmatrix[2]*cos + (long long)s32_currentmatrix[3]*sin) >> 20;
+	s32_ipointmatrix[3] = ((long long)s32_currentmatrix[3]*cos - (long long)s32_currentmatrix[2]*sin) >> 20;
 
 
 }

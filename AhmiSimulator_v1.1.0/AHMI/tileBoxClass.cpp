@@ -248,26 +248,26 @@ funcStatus TileBoxClass::sourceReCompute(
 	//}
 	if( elementType == ANIMATION_REFRESH_WIDGET)
 	{
-		point1.mPointX = curX * 512 / matrixPtr->A - matrixPtr->E + (focusedCanvas->moffsetX << 4); //相对偏移量需要乘以缩放系数，然后加上矩阵中传过来的绝对偏移量
-		point1.mPointY = curY * 512 / matrixPtr->A - matrixPtr->F + (focusedCanvas->moffsetY << 4); //注意：widget中矩阵传来的平移量是减去了canvas原始位置得到的量
-	}
-	else 
-	{
-	    point1.mPointX = curX - matrixPtr->E; //canvas矩阵中传来的偏移量就是相对于当前未缩放的canvas的相对偏移量，不需要再乘以缩放量
-	    point1.mPointY = curY - matrixPtr->F;
+		//计算坐标点
+		point1.mPointX = (long long)curX * 0x100000 / matrixPtr->A - (matrixPtr->E >> 9) + (focusedCanvas->moffsetX << 4); //相对偏移量需要乘以缩放系数，然后加上矩阵中传过来的绝对偏移量
+		point1.mPointY = (long long)curY * 0x100000 / matrixPtr->A - (matrixPtr->F >> 9) + (focusedCanvas->moffsetY << 4); //注意：widget中矩阵传来的平移量是减去了canvas原始位置得到的量
+
+	}else{
+	    point1.mPointX = curX - (matrixPtr->E >> 9); //canvas矩阵中传来的偏移量就是相对于当前未缩放的canvas的相对偏移量，不需要再乘以缩放量
+	    point1.mPointY = curY - (matrixPtr->F >> 9);
 	}
 	//point2.mPointX = curX + curWidth;
 	//point2.mPointY = curY;
-	point3.mPointX = curWidth * 512 / matrixPtr->A;
-	point3.mPointY = curHeight * 512 / matrixPtr->A;
+	point3.mPointX = (long long)curWidth * 0x100000 / matrixPtr->A;
+	point3.mPointY = (long long)curHeight * 0x100000 / matrixPtr->A;
 	//point4.mPointX = curX;
 	//point4.mPointY = curY + curHeight;
 	//point1.leftMulMatrixInv(matrixPtr);
 	//point2.leftMulMatrixInv(matrixPtr);
 	//point3.leftMulMatrixInv(matrixPtr);
 	//point4.leftMulMatrixInv(matrixPtr);
-	this->LeftBox = (point1.mPointX) / 512;
-	this->TopBox  = (point1.mPointY) / 512;
+	this->LeftBox = (point1.mPointX) / 512;	 // 16 * TILESIZE
+	this->TopBox  = (point1.mPointY) / 512;  // 16 * TILESIZE
 	//
 	#if 0
 	this->RightBox = ((point1.mPointX + point3.mPointX) /16 + TILESIZE - 1)/ TILESIZE ;

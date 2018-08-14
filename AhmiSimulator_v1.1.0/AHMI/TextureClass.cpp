@@ -11,7 +11,7 @@ extern u8       sourceBuffer[2048];
 extern DynamicPageClassPtr gPagePtr;
 extern u16             WorkingPageID;
 extern	u8 addr_w;
-extern s16 screenratio; //½â¾ö³¤¿í±ÈÀý²»Ò»ÖÂµÄÇé¿ö
+extern s16 screenratio; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Âµï¿½ï¿½ï¿½ï¿½
 
 TextureClass::TextureClass(void)
 {
@@ -24,24 +24,24 @@ TextureClass::~TextureClass(void)
 
 
 //-----------------------------
-// º¯ÊýÃû£º  writesourcebuffer
-// Ð´sourcebufferº¯Êý
-// ²ÎÊýÁÐ±í£º
-// @param1 u32*   psourceshift            sourcebufferÆ«ÒÆÁ¿
-// @param2 matrixClassPtr addtionalMatrix ¶îÍâµÄ¾ØÕó
-// ±¸×¢(¸÷¸ö°æ±¾Ö®¼äµÄÐÞ¸Ä):
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  writesourcebuffer
+// Ð´sourcebufferï¿½ï¿½ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+// @param1 u32*   psourceshift            sourcebufferÆ«ï¿½ï¿½ï¿½ï¿½
+// @param2 matrixClassPtr addtionalMatrix ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½
+// ï¿½ï¿½×¢(ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾Ö®ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½):
 // ...
 //-----------------------------
 funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr addtionalMatrix, WidgetClassPtr p_wptr,TileBoxClassPtr pTileBox)
 {
-	matrixClass matrixTemp, matrixTemp2; //ÓÃÓÚ¼ÆËãsource buffer¾ØÕó by ÖÜîÚÖÂ
-	CanvasClassPtr focusedCanvas;       //ÓÃÓÚ¼ÆËãÏà¶Ô×ø±ê
+	matrixClass matrixTemp, matrixTemp2; //ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½source bufferï¿½ï¿½ï¿½ï¿½ by ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	CanvasClassPtr focusedCanvas;       //ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	matrixTemp.matrixInit();
 	matrixTemp2.matrixInit();
 	s32 angle;
-	s16 para1,para2;
+	s32 para1,para2;
 	u32 addr;
-	s32 NewMatrix[4] = {512,0,0,512};//1.22.9
+	s32 NewMatrix[4] = {0x100000,0,0,0x100000};//1.11.20
 	int i;
 	u8 *sourcebufferaddr;
 	sourcebufferaddr = (u8 *)SoureBufferAddr;
@@ -49,8 +49,8 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 	//u8 SB_MaskType,
 	u8 SB_Matrix, SB_AddrType;
 	myMathClass myMath;
-	PointClass pointTemp(this->OffsetX,this->OffsetY);  //ÓÃÀ´¼ÆËãÖÐÐÄÐý×ªÆ«ÒÆÁ¿µÄ¾ØÕó NULL == psourceshift ||
-	s32 movingX, movingY;    //x,y·½ÏòÐèÒªÆ«ÒÆµÄÆ«ÒÆÁ¿
+	PointClass pointTemp(this->OffsetX,this->OffsetY);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªÆ«ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½ NULL == psourceshift ||
+	s32 movingX, movingY;    //x,yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÆ«ï¿½Æµï¿½Æ«ï¿½ï¿½ï¿½ï¿½
 
 
 	if(  NULL == addtionalMatrix || NULL == psourceshift){
@@ -60,84 +60,57 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 
 	if(p_wptr != NULL)
 		focusedCanvas = &gPagePtr[WorkingPageID].pCanvasList[p_wptr->ATTATCH_CANVAS];
-//#ifdef EMBEDDED	
-//	TextureClass newTexture;
-//
-//	if(*psourceshift >= (SRCBUFSIZE - 96))
-//	{
-//		*(sourcebufferaddr + (*psourceshift)++) = ENDFLAG;
-//		AHMIDraw(psourceshift);
-//
-//		newTexture.TexAddr = START_ADDR_OF_RAM + START_ADDR_OF_DISPLAY + addr_w * SIZE_OF_DISPLAY_BUFFER;
-//		newTexture.OffsetX = 0 * 16;
-//		newTexture.OffsetY = 0 * 16;
-//		newTexture.FocusedSlice = 0;
-//		newTexture.RotateAngle = 0 * 16;
-//		newTexture.ScalerX = 1 * 512;
-//		newTexture.ScalerY = 1 * 512;
-//		newTexture.ShearAngleX = 0 * 16;
-//		newTexture.SingleSliceSize = SCREEN_WIDTH * SCREEN_HEIGHT * 2;
-//		newTexture.mTexAttr = NONMASKTEX | EFMATRIX | ADDRTEXTURE | RGBA8888 | DRAWING;
-//		newTexture.TexWidth = SCREEN_WIDTH;
-//		newTexture.TexHeight = SCREEN_HEIGHT;
-//		newTexture.TexLeftTileBox = 0;
-//		newTexture.TexRightTileBox = TILE_NUM_X;
-//		newTexture.TexTopTileBox = 0;
-//		newTexture.TexButtomTileBox = TILE_NUM_Y;
-//
-//		newTexture.writeSourceBuffer(psourceshift, addtionalMatrix, p_wptr,NULL);
-//
-//	}
-//#endif
+#ifdef EMBEDDED	
+	TextureClass newTexture;
+	if(*psourceshift >= (SRCBUFSIZE - 96))
+	{
+		*(sourcebufferaddr + (*psourceshift)++) = ENDFLAG;
+		AHMIDraw(psourceshift);
+		newTexture.TexAddr = START_ADDR_OF_RAM + START_ADDR_OF_DISPLAY + addr_w * SIZE_OF_DISPLAY_BUFFER;
+		newTexture.OffsetX = 0 * 16;
+		newTexture.OffsetY = 0 * 16;
+		newTexture.FocusedSlice = 0;
+		newTexture.RotateAngle = 0 * 16;
+		newTexture.ScalerX = 1 * 512;
+		newTexture.ScalerY = 1 * 512;
+		newTexture.ShearAngleX = 0 * 16;
+		newTexture.SingleSliceSize = SCREEN_WIDTH * SCREEN_HEIGHT * 2;
+		newTexture.mTexAttr = NONMASKTEX | EFMATRIX | ADDRTEXTURE | RGBA8888 | DRAWING;
+		newTexture.TexWidth = SCREEN_WIDTH;
+		newTexture.TexHeight = SCREEN_HEIGHT;
+		newTexture.TexLeftTileBox = 0;
+		newTexture.TexRightTileBox = TILE_NUM_X;
+		newTexture.TexTopTileBox = 0;
+		newTexture.TexButtomTileBox = TILE_NUM_Y;
+		newTexture.writeSourceBuffer(psourceshift, addtionalMatrix, p_wptr,NULL);
+	}
+#endif
 	
 	
-	//TexAttrÎªÎÆÀíÊôÐÔ¹²16bits£¬²»Í¬µÄ±ÈÌØÎ»°üº¬ÎÆÀíµÄ²»Í¬ÊôÐÔ£¬¶ÔÓ¦¹ØÏµÈçÏÂ
+	//TexAttrÎªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¹ï¿½16bitsï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ä±ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½Í¬ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½
 	//Resaved(15:11) SB_MaskType(10:9) SB_AddrType(8)
 	//SB_texType(7:4) SB_Mask(3) SB_Matrix(2:1) SB_End(0)
 	//SB_MaskType = (TexAttr & MASKTYPE_NOT) >> 9;
 	SB_Matrix  = (TexAttr & ABCDEFMATRIX) >> 1;
 	SB_AddrType = (TexAttr & ADDRTEXTURE) >> 8;
-	//TexMinSizeÎªÎÆÀíÕ¼ÓÃµÄ×îÐ¡ÄÚ´æ´óÐ¡,µ¥Î»Îª×Ö½Ú£¬²»Í¬µÄÎÆÀíÊôÐÔÕ¼ÓÃµÄÄÚ´æ´óÐ¡²»Í¬
-	//MatrixÓÐËÄÖÖ¿ÉÄÜ£¬0±íÊ¾Ö»ÓÐE, F£¬Ö»ÓÐÆ½ÒÆ£»1±íÊ¾Ö»ÓÐA, B£¨A = D, B = -C£©£¬±íÊ¾Ö»ÓÐ·ÅËõ»òÕßÐý×ª¡£2±íÊ¾AB(CD)EF¶¼ÓÐ¡£(32/64/96bits)
-	//TexSizeÁ½ÖÖ¿ÉÄÜ£¬0±íÊ¾¶¼Îª8bit, 1±íÊ¾¶¼Îª16bit£¨×¢Ò»¸ö8bitÒ»¸ö16bitÀ©Õ¹ÎªË«16bit)¡£(16/32bits)
-	//AddrTypeÁ½ÖÖ¿ÉÄÜ£¬0±íÊ¾Îª²»ÐèÒªµØÖ·£¬1±íÊ¾ÎªÐèÒª¡£ (0/32bits)
+	//TexMinSizeÎªï¿½ï¿½ï¿½ï¿½Õ¼ï¿½Ãµï¿½ï¿½ï¿½Ð¡ï¿½Ú´ï¿½ï¿½Ð¡,ï¿½ï¿½Î»Îªï¿½Ö½Ú£ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½Ãµï¿½ï¿½Ú´ï¿½ï¿½Ð¡ï¿½ï¿½Í¬
+	//Matrixï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½Ü£ï¿½0ï¿½ï¿½Ê¾Ö»ï¿½ï¿½E, Fï¿½ï¿½Ö»ï¿½ï¿½Æ½ï¿½Æ£ï¿½1ï¿½ï¿½Ê¾Ö»ï¿½ï¿½A, Bï¿½ï¿½A = D, B = -Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Ö»ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½2ï¿½ï¿½Ê¾AB(CD)EFï¿½ï¿½ï¿½Ð¡ï¿½(32/64/96bits)
+	//TexSizeï¿½ï¿½ï¿½Ö¿ï¿½ï¿½Ü£ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½Îª8bit, 1ï¿½ï¿½Ê¾ï¿½ï¿½Îª16bitï¿½ï¿½×¢Ò»ï¿½ï¿½8bitÒ»ï¿½ï¿½16bitï¿½ï¿½Õ¹ÎªË«16bit)ï¿½ï¿½(16/32bits)
+	//AddrTypeï¿½ï¿½ï¿½Ö¿ï¿½ï¿½Ü£ï¿½0ï¿½ï¿½Ê¾Îªï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ö·ï¿½ï¿½1ï¿½ï¿½Ê¾Îªï¿½ï¿½Òªï¿½ï¿½ (0/32bits)
 	//int texshift = TexMinSize
 	//	+ (((SB_Matrix+1)>>1) << 2)
-	//	+ (SB_AddrType << 2);//ÓÃÒÔ¼ÇÂ¼Ö¸ÕëµÄÆ«ÒÆ×Ö½Ú×ÜÊý
+	//	+ (SB_AddrType << 2);//ï¿½ï¿½ï¿½Ô¼ï¿½Â¼Ö¸ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	//recomputing the matrix attribute of current texture
-	if( !(addtionalMatrix->A == 512 && addtionalMatrix->B == 0 && addtionalMatrix->C == 0 && addtionalMatrix->D == 512) ) //indicating that current matrix is no enough
-	{
 		SB_Matrix = 3;
-		TexAttr |= ABCDEFMATRIX;
-	}
-
-	if( TexAttr & USING_PIXEL_RATIO ) // needs to fix ellipse
-	{
-		SB_Matrix = 3;
-		TexAttr |= ABCDEFMATRIX;
-	}
-
+	//Ç¿ï¿½ï¿½Ê¹ï¿½ï¿½ ABCDEF ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬²ï¿½ï¿½Ù½ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½ä»»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+	TexAttr |= ABCDEFMATRIX;
 	
-	
-	//if (((*psourceshift) + texshift)>SoureBufferSize - 1)
-	//{
-	//	if ((*psourceshift)<SoureBufferSize - 1)//sourcebufferÊ£Óà²»Ð¡ÓÚ16itsÊ±£¬Ð´ºó×º
-	//	{
-	//		*(sourcebufferaddr + (*psourceshift)++) = 0;//texfisrtheader=0 or something else
-	//		*(sourcebufferaddr + (*psourceshift)++) = SB_END;//texsecondheader = \0010 0000
-	//	}
-	//	freshen(psourceshift, *pflag);//sourecebuffer Òç³öÊ±£¬Ë¢ÐÂ²¿·ÖÍ¼Æ¬£¬Ë¢ÐÂºó¼ÌÐø
-	//	*pflag = 1;//means true,ÐèÒªÐ´±³¾°
-	//}
-	//writing headers
-	//*(sourcebufferaddr + (*psourceshift)++) = (u8)(TexAttr >> 8 & 0xff);//texfisrtheader
-	//*(sourcebufferaddr + (*psourceshift)++) = (u8)(TexAttr & 0xff);//texsecondheader
-	// modified by xt 2015/05/07
+	// modified by xt 2015/05/07 
+	// write texture attribute
 	*(sourcebufferaddr + (*psourceshift)++) = (u8)(TexAttr & 0xff);//texfisrtheader
 	*(sourcebufferaddr + (*psourceshift)++) = (u8)((TexAttr >> 8) & 0x7f);//texsecondheader
 
-	//writing boxsize
+	// writing boxsize
 	if(pTileBox == NULL)
 	{
 		*(sourcebufferaddr + (*psourceshift)++) = this->TexLeftTileBox;//startx
@@ -154,176 +127,71 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 	}
 
 	//writing texsize
-	//TexSizeÁ½ÖÖ¿ÉÄÜ£¬0±íÊ¾¶¼Îª8bit, 1±íÊ¾¶¼Îª16bit£¨×¢Ò»¸ö8bitÒ»¸ö16bitÀ©Õ¹ÎªË«16bit)¡£(16/32bits)
+	//TexSizeï¿½ï¿½ï¿½Ö¿ï¿½ï¿½Ü£ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½Îª8bit, 1ï¿½ï¿½Ê¾ï¿½ï¿½Îª16bitï¿½ï¿½×¢Ò»ï¿½ï¿½8bitÒ»ï¿½ï¿½16bitï¿½ï¿½Õ¹ÎªË«16bit)ï¿½ï¿½(16/32bits)
 	*(sourcebufferaddr + (*psourceshift)++) = (u8)(this->TexWidth & 0xff);
 	*(sourcebufferaddr + (*psourceshift)++) = (u8)(this->TexWidth >> 8 & 0xff);
 	*(sourcebufferaddr + (*psourceshift)++) = (u8)(this->TexHeight & 0xff);
 	*(sourcebufferaddr + (*psourceshift)++) = (u8)(this->TexHeight >> 8 & 0xff);
 
 	//writing matrix
-	//MatrixÓÐÈýÖÖ¿ÉÄÜ£¬0±íÊ¾Ö»ÓÐE, F£¬Ö»ÓÐÆ½ÒÆ£»1±íÊ¾ÓÐA,B,E,F£¨A = D, B = -C£©£¬±íÊ¾Ö»ÓÐÐý×ªÎ»ÒÆ.2±íÊ¾ÓÐA,D,E,F·ÅËõÎ»ÒÆ¡£3±íÊ¾ÓÐABCDEF¡£(32/64/96bits)
+	//Matrixï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½Ü£ï¿½0ï¿½ï¿½Ê¾Ö»ï¿½ï¿½E, Fï¿½ï¿½Ö»ï¿½ï¿½Æ½ï¿½Æ£ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½A,B,E,Fï¿½ï¿½A = D, B = -Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Ö»ï¿½ï¿½ï¿½ï¿½×ªÎ»ï¿½ï¿½.2ï¿½ï¿½Ê¾ï¿½ï¿½A,D,E,Fï¿½ï¿½ï¿½ï¿½Î»ï¿½Æ¡ï¿½3ï¿½ï¿½Ê¾ï¿½ï¿½ABCDEFï¿½ï¿½(32/64/96bits)
 	//when writing the matrix, we need to judge whether the current matrix is enough to represent the animation
-	
-
-	if (SB_Matrix == 0) // E F
+	// compute and write matrix
 	{
-		//modified by xt 20150508
-		//³õÊ¼¾ØÕó´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕó
-		matrixTemp.A = (1<<9);
-		matrixTemp.B = 0;
-		matrixTemp.C = 0;
-		matrixTemp.D = (1<<9);
-		matrixTemp.E = 0;
-		matrixTemp.F = 0;
-		
-		matrixTemp.matrixMulti(addtionalMatrix);
-
-		matrixTemp.E += -(this->OffsetX );
-		matrixTemp.F += -(this->OffsetY );
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E >> 8 & 0xff); 
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F >> 8 & 0xff);
-	}
-	//ABEF Ðý×ª
-	else if (SB_Matrix==1)
-	{
-		//modified by xt 201505012
-		//³õÊ¼¾ØÕó´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕó
-		matrixTemp.E = 0;
-		matrixTemp.F = 0;
-		matrixTemp2.E = 0;
-		matrixTemp2.F = 0;
-		//Ðý×ª½Ç¶È´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕóµÄÐý×ª½Ç¶È
-		angle = this->RotateAngle;//1.11.4
-		//¼ÆËãÐý×ª½Ç¶È
-
-		//ÐèÒªÖÐÐÄÐý×ªÐèÒª¶îÍâµÄÆ«ÒÆÁ¿
-		if(this->mTexAttr & TEXTURE_CENTRAL_ROTATE) //ÖÐÐÄÐý×ª
-		{
-			para1 = 512;
-			para2 = 0;
-			myMath.CORDIC(angle,&para1,&para2);//ÏÈ¼ÆËãÐý×ªµÄÕý¾ØÕó
-			matrixTemp2.A = para1;
-			matrixTemp2.C = -para2;
-			matrixTemp2.B = para2;
-			matrixTemp2.D = para1; //ÒòÎªÎÒÓÃµÄÊÇ×ªÖÃ¾ØÕó£¬ËùÒÔÕâÑù¸³Öµ
-			
-			pointTemp.mPointX = ( (s32)(this->TexWidth) * 8);//* 16 / 2;
-			pointTemp.mPointY = ( (s32)(this->TexHeight) * 8);// * 16 / 2;
-			pointTemp.leftMulMatrix(&matrixTemp2);
-			movingX = pointTemp.mPointX - ( (s32)(this->TexWidth) *8);
-			movingY = pointTemp.mPointY - ( (s32)(this->TexHeight)*8 );
-			matrixTemp2.E += movingX;
-			matrixTemp2.F += movingY;
-		}
-
-		//¿ªÊ¼¼ÆËãÐý×ªµÄ½Ç¶È
-		para1 = 512;//cos
-		para2 = 0;  //sin
-		myMath.CORDIC(-angle,&para1,&para2);
-		matrixTemp.A = para1;
-		matrixTemp.B = para2;
-		matrixTemp.C = -para2;
-		matrixTemp.D = para1;
-		matrixTemp.matrixMulti(addtionalMatrix);
-		//¼ÆËãE,FµÄÊ±ºòÐèÒª¿¼ÂÇÐý×ª·½Ïò
-
-		matrixTemp.E += matrixTemp2.E;
-		matrixTemp.F += matrixTemp2.F;
-		matrixTemp.E += -(this->OffsetX );
-		matrixTemp.F += -(this->OffsetY );
-
-
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A >> 8 & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.B & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.B >> 8 & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E >> 8 & 0xff); 
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F >> 8 & 0xff);
-	} 												  
-	else if (SB_Matrix==2)
-	{
-		//modified by xt 20150512
-		//³õÊ¼¾ØÕó´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕó
-		matrixTemp.E =0;
-		matrixTemp.F =0;
-		//·Å´ó±¶Êý´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕó
-		
-		para1 = 0x40000 / this->ScalerX;
-		para2 = 0x40000 / this->ScalerY;
-
-		matrixTemp.A = para1;
-		matrixTemp.B = 0;
-		matrixTemp.C = 0;
-		matrixTemp.D = para2;
-		matrixTemp.matrixMulti(addtionalMatrix);
-		matrixTemp.E += -(this->OffsetX );
-		matrixTemp.F += -(this->OffsetY );
-
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A >> 8 & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.D & 0xff);
-        *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.D >> 8 & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E >> 8 & 0xff); 
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F & 0xff);
-		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F >> 8 & 0xff);
-	}
-	else
-	{
-		//³õÊ¼¾ØÕó´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕó
+		//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½BasicTextureï¿½á¹¹ï¿½ï¿½ï¿½Ð»ï¿½È¡ï¿½ï¿½BasicTextureï¿½Ð´æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(p_wptr != NULL)
 		{
-			//Ïà¶ÔÓÚcanvasµÄÆ«ÒÆÁ¿ÐèÒª³ËÒÔËõ·ÅÏµÊý£¬ÓÉÓÚadditionalMatrixÖÐÆ½ÒÆÁ¿ÊÇÏà¶ÔÓÚcanvasµ±Ç°Î»ÖÃµÄÆ½ÒÆÁ¿£¬ËùÒÔÐèÒª¼õÈ¥focusedCanvas->offset
-			matrixTemp.E =-(this->OffsetX - (focusedCanvas->moffsetX * 16)) * 512 / addtionalMatrix->A - focusedCanvas->moffsetX * 16;
-			matrixTemp.F =-(this->OffsetY - (focusedCanvas->moffsetY * 16)) * 512 / addtionalMatrix->A - focusedCanvas->moffsetY * 16;
+			//ï¿½ï¿½ï¿½ï¿½ï¿½canvasï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½additionalMatrixï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½canvasï¿½ï¿½Ç°Î»ï¿½Ãµï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½È¥focusedCanvas->offset
+			matrixTemp.E =-(this->OffsetX - (long long)(focusedCanvas->moffsetX * 16)) * 0x100000 / addtionalMatrix->A - focusedCanvas->moffsetX * 16;
+			matrixTemp.F =-(this->OffsetY - (long long)(focusedCanvas->moffsetY * 16)) * 0x100000 / addtionalMatrix->A - focusedCanvas->moffsetY * 16;
 		}
 		else 
 		{
 			matrixTemp.E = -(this->OffsetX );
 			matrixTemp.F = -(this->OffsetY );
 		}
+		matrixTemp.E <<= 9;
+		matrixTemp.F <<= 9;
 
-		//Ðý×ª½Ç¶È´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕóµÄÐý×ª½Ç¶È,¼ÆËãÐý×ª½Ç¶È
-		myMath.MatrixRotate(this->RotateAngle,NewMatrix);
-		//´íÇÐ½Ç¶È´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕó,¼ÆËã´íÇÐ½Ç¶È
-		if(this->ShearAngleY == 0 && this->ShearAngleX != 0)
-				myMath.MatrixShearX(this->ShearAngleX,NewMatrix);
-		else if(this->ShearAngleY != 0 && this->ShearAngleX == 0)
-				myMath.MatrixShearY(this->ShearAngleY,NewMatrix);
-		else myMath.MatrixShearX(this->ShearAngleX,NewMatrix);
-
-		//ÐèÒªÖÐÐÄÐý×ªÐèÒª¶îÍâµÄÆ«ÒÆÁ¿
-		//Ðý×ª½Ç¶È´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕóµÄÐý×ª½Ç¶È
+		//ï¿½ï¿½×ªï¿½Ç¶È´ï¿½BasicTextureï¿½á¹¹ï¿½ï¿½ï¿½Ð»ï¿½È¡ï¿½ï¿½BasicTextureï¿½Ð´æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Ç¶ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Ç¶ï¿½
+		myMath.MatrixRotate(this->RotateAngle, NewMatrix);
+		//ï¿½ï¿½ï¿½Ð½Ç¶È´ï¿½BasicTextureï¿½á¹¹ï¿½ï¿½ï¿½Ð»ï¿½È¡ï¿½ï¿½BasicTextureï¿½Ð´æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð½Ç¶ï¿½
+		if(this->ShearAngleY == 0 && this->ShearAngleX != 0){
+			myMath.MatrixShearX(this->ShearAngleX, NewMatrix);
+		}else if(this->ShearAngleY != 0 && this->ShearAngleX == 0){
+			myMath.MatrixShearY(this->ShearAngleY, NewMatrix);
+		}else{ 
+			myMath.MatrixShearX(this->ShearAngleX, NewMatrix);
+		}
+		//ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½
+		//ï¿½ï¿½×ªï¿½Ç¶È´ï¿½BasicTextureï¿½á¹¹ï¿½ï¿½ï¿½Ð»ï¿½È¡ï¿½ï¿½BasicTextureï¿½Ð´æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Ç¶ï¿½
 		angle = this->RotateAngle;//1.11.4
 		matrixTemp2.E = 0;
 		matrixTemp2.F = 0;
-		if(this->mTexAttr & TEXTURE_CENTRAL_ROTATE) //ÖÐÐÄÐý×ª
+		if(this->mTexAttr & TEXTURE_CENTRAL_ROTATE) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ª
 		{
-			para1 = 512;
+			// compute rotate matrix
+			para1 = 0x100000;
 			para2 = 0;
-			myMath.CORDIC(angle,&para1,&para2);//ÏÈ¼ÆËãÐý×ªµÄÕý¾ØÕó
+			myMath.CORDIC_32(angle, &para1, &para2);//ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½									 k
 			matrixTemp2.A = para1;
 			matrixTemp2.C = -para2;
 			matrixTemp2.B = para2;
-			matrixTemp2.D = para1; //ÒòÎªÎÒÓÃµÄÊÇ×ªÖÃ¾ØÕó£¬ËùÒÔÕâÑù¸³Öµ
+			matrixTemp2.D = para1; //ï¿½ï¿½Îªï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½×ªï¿½Ã¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 			
-			//¼ÆËã·ÅËõÁ¿µÄÐÞ¸´¾ØÕóÐÞ¸´£¨Õë¶ÔÆÁÄ»²»Ò»ÖÂµÄÇé¿ö£©
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½Ò»ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			matrixClass matrixTempForScale;
 			matrixTempForScale.matrixInit();
-			//ÓÉÓÚ¸øµÄ²ÎÊýÊÇÆÁÄ»ÏÔÊ¾¿í¸ß±ÈÀý£¬ËùÒÔÔÚÊ¹ÓÃµÄÊ±ºòÒª½øÐÐÈ¡·´À´ÊµÏÖÐÞÕý
+			//ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½Ê¾ï¿½ï¿½ß±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½Ê±ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			matrixTempForScale.A = (512);
 			matrixTempForScale.D = (screenratio) ; 
 
 			PointClass pointTemp2(0,0), pointTemp3(0,0);
-			//¼ÆËãÐý×ªµ¼ÖÂµÄÖÐÐÄÆ«ÒÆÁ¿
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½
  			pointTemp2.mPointX = ( (s32)(this->TexWidth) * 8);//* 16 / 2;
 			pointTemp2.mPointY = ( (s32)(this->TexHeight) * 8);// * 16 / 2;
 			pointTemp2.leftMulMatrix(&matrixTemp2);
-			//¼ÆËãÐýºóµÄÖÐÐÄÊ¹ÓÃ·ÅËõÐÞÕý¾ØÕóµ¼ÖÂµÄÖÐÐÄÆ«ÒÆÁ¿
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½
 			pointTemp3.mPointX = (pointTemp2.mPointX);//* 16 / 2;
 			pointTemp3.mPointY = (pointTemp2.mPointY);// * 16 / 2;
 			pointTemp3.leftMulMatrix(&matrixTempForScale);
@@ -334,17 +202,26 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 			matrixTemp2.E += movingX * 512 / addtionalMatrix->A ;
 			matrixTemp2.F += movingY * 512 / addtionalMatrix->A ;
 
+			pointTemp.mPointX = ( (s32)(this->TexWidth) * 8); // * 16 / 2;
+			pointTemp.mPointY = ( (s32)(this->TexHeight) * 8); // * 16 / 2;
+			pointTemp.leftMulMatrix(&matrixTemp2);
+			movingX = pointTemp.mPointX - ( (s32)(this->TexWidth) * 8);
+			movingY = pointTemp.mPointY - ( (s32)(this->TexHeight) * 8);
+			
+			matrixTemp2.E += ((movingX * 0x100000 / addtionalMatrix->A) << 9) ;
+			matrixTemp2.F += ((movingY * 0x100000 / addtionalMatrix->A) << 9) ;
 		}
 
 		matrixTemp.E += matrixTemp2.E;
 		matrixTemp.F += matrixTemp2.F;
-		//·Å´ó±¶Êý´ÓBasicTexture½á¹¹ÌåÖÐ»ñÈ¡£¬BasicTextureÖÐ´æ´¢µÄÊÇÕý¾ØÕó,¼ÆËã·Å´ó±¶Êý
+		//ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½BasicTextureï¿½á¹¹ï¿½ï¿½ï¿½Ð»ï¿½È¡ï¿½ï¿½BasicTextureï¿½Ð´æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Å´ï¿½ï¿½ï¿½
 		//myMath.MatrixScaler(this->ScalerX,this->ScalerY,NewMatrix);
 
+		//32ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ô½Î»
 		for(i=0;i<4;i++)
 		{
-			if(NewMatrix[i]>32767)  NewMatrix[i] = 32767;
-			if(NewMatrix[i]<-32768) NewMatrix[i] = -32768;
+			if((long long)NewMatrix[i]>(long long)0x7fffffff)  NewMatrix[i] = 0x7fffffff;
+			if((long long)NewMatrix[i]<(long long)-0x7fffffff) NewMatrix[i] = -0x7fffffff;
 		}
 		matrixTemp.A = NewMatrix[0];
 		matrixTemp.B = NewMatrix[1];
@@ -352,10 +229,15 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 		matrixTemp.D = NewMatrix[3];
 
 		matrixTemp.matrixMulti(addtionalMatrix);
-		////·ÅËõÁ¿µÄ¾ØÕóÐÞ¸´£¨Õë¶ÔÆÁÄ»¿í¸ß²»Ò»ÖÂµÄÇé¿ö£©
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿ï¿½ß²ï¿½Ò»ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		matrixClass matrixTempForScale;
+		matrixTempForScale.matrixInit();
+		matrixTempForScale.A = (0x40000 / this->ScalerX) << 11;
+		matrixTempForScale.D = (0x40000 / this->ScalerY) << 11; 
+		matrixTemp.matrixMulti(&matrixTempForScale);
 
-		//·ÅËõÁ¿µÄ¾ØÕóÐÞ¸´£¨Õë¶ÔÆÁÄ»¿í¸ß²»Ò»ÖÂµÄÇé¿ö£©
- 		//ÓÉÓÚ¸øµÄ²ÎÊýÊÇÆÁÄ»ÏÔÊ¾¿í¸ß±ÈÀý£¬ËùÒÔÔÚÊ¹ÓÃµÄÊ±ºòÒª½øÐÐÈ¡·´À´ÊµÏÖÐÞÕý
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ß²ï¿½Ò»ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ 		//ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½Ê¾ï¿½ï¿½ß±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½Ê±ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(TexAttr & USING_PIXEL_RATIO) //needs to fix the ellipse pixel, by zuz 20180802
 		{
 		    matrixClass matrixTempForScale;
@@ -367,24 +249,36 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.A >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.A >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.A >> 24) & 0xff); 
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.B & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.B >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.B >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.B >> 24) & 0xff); 
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.C & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.C >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.C >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.C >> 24) & 0xff); 
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.D & 0xff);
         *(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.D >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.D >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.D >> 24) & 0xff); 
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E & 0xff);
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.E >> 8 & 0xff); 
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.E >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.E >> 24) & 0xff); 
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F & 0xff);
 		*(sourcebufferaddr + (*psourceshift)++) = (u8)(matrixTemp.F >> 8 & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.F >> 16) & 0xff);
+		*(sourcebufferaddr + (*psourceshift)++) = (u8)( (matrixTemp.F >> 24) & 0xff); 
 	}
 
 
 	//writing addr or color
-	//AddrTypeÁ½ÖÖ¿ÉÄÜ£¬0±íÊ¾Îª²»ÐèÒªaddr£¬1±íÊ¾ÎªÐèÒªaddr¡£ (0/32bits)
+	//AddrTypeï¿½ï¿½ï¿½Ö¿ï¿½ï¿½Ü£ï¿½0ï¿½ï¿½Ê¾Îªï¿½ï¿½ï¿½ï¿½Òªaddrï¿½ï¿½1ï¿½ï¿½Ê¾Îªï¿½ï¿½Òªaddrï¿½ï¿½ (0/32bits)
 	if (SB_AddrType==1)
 	{
-#if 0	//STM32Ó²¼þBUGµ¼ÖÂÒ»ÌõÓï¾äÖÐÍ¬Ê±Ê¹ÓÃ"+"ºÍ"*"ÔËËã·û»á³ö´í
+#if 0	//STM32Ó²ï¿½ï¿½BUGï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ê±Ê¹ï¿½ï¿½"+"ï¿½ï¿½"*"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		addr = (u32)(this->TexAddr + this->SingleSliceSize*(this->FocusedSlice));
 //		addr += (u32)(this->SingleSliceSize*(this->FocusedSlice));
 #else
@@ -401,11 +295,11 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 }
 
 //-----------------------------
-// º¯ÊýÃû£º  renewTextureSourceBox
-// ¸ù¾Ýµ±ÆÚÄÇÎÆÀíµÄÎ»ÖÃÓÅ»¯ÎÆÀí°üÎ§ºÐ
-// ²ÎÊýÁÐ±í£º
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  renewTextureSourceBox
+// ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
 //      void
-// ±¸×¢(¸÷¸ö°æ±¾Ö®¼äµÄÐÞ¸Ä):
+// ï¿½ï¿½×¢(ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾Ö®ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½):
 //    added by zhouyuzhi 20160614
 //-----------------------------
 funcStatus TextureClass::renewTextureSourceBox(
@@ -415,28 +309,28 @@ funcStatus TextureClass::renewTextureSourceBox(
 	)
 {
 	
-	PointClass leftTopPoint(0, 0); //×óÉÏ½Ç¶¨µã
-	PointClass leftBottomPoint(0, 0 + (this->TexHeight * 16) * this->ScalerY / 512); //×óÏÂ½Ç
-	PointClass rightTopPoint(0 + (this->TexWidth * 16) * this->ScalerX / 512, 0); //ÓÒÉÏ½Ç
-	PointClass rightButtomPoint(0 + (this->TexWidth * 16) * this->ScalerX / 512, 0 + (this->TexHeight * 16) * this->ScalerY / 512 ); //ÓÒÏÂ½Ç
+	PointClass leftTopPoint(0, 0); //ï¿½ï¿½ï¿½Ï½Ç¶ï¿½ï¿½ï¿½
+	PointClass leftBottomPoint(0, 0 + (this->TexHeight * 16) * this->ScalerY / 512); //ï¿½ï¿½ï¿½Â½ï¿½
+	PointClass rightTopPoint(0 + (this->TexWidth * 16) * this->ScalerX / 512, 0); //ï¿½ï¿½ï¿½Ï½ï¿½
+	PointClass rightButtomPoint(0 + (this->TexWidth * 16) * this->ScalerX / 512, 0 + (this->TexHeight * 16) * this->ScalerY / 512 ); //ï¿½ï¿½ï¿½Â½ï¿½
 	PointClass offsetAfterScaler(0,0);
 	s32 minX=0,minY=0,maxX=0,maxY=0; //1.27.4
 
 	if(additionalMatrix != NULL)
 	{
-		leftBottomPoint.mPointY = leftBottomPoint.mPointY * 512 / additionalMatrix->A;
-		rightTopPoint.mPointX = rightTopPoint.mPointX * 512 / additionalMatrix->A;
-		rightButtomPoint.mPointX = rightButtomPoint.mPointX * 512 / additionalMatrix->A;
-		rightButtomPoint.mPointY = rightButtomPoint.mPointY * 512 / additionalMatrix->A;
+		leftBottomPoint.mPointY = (long long)leftBottomPoint.mPointY * 0x100000 / additionalMatrix->A;
+		rightTopPoint.mPointX =   (long long)rightTopPoint.mPointX * 0x100000 / additionalMatrix->A;
+		rightButtomPoint.mPointX = (long long)rightButtomPoint.mPointX * 0x100000 / additionalMatrix->A;
+		rightButtomPoint.mPointY = (long long)rightButtomPoint.mPointY * 0x100000 / additionalMatrix->A;
 	}
 
-	//ËÄ¸ö×ø±êµã·Ö±ð×öÐý×ª
+	//ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½×ª
 	leftTopPoint.pointRotating(this->RotateAngle);
 	leftBottomPoint.pointRotating(this->RotateAngle);
 	rightTopPoint.pointRotating(this->RotateAngle);
 	rightButtomPoint.pointRotating(this->RotateAngle);
 
-	//¼ÆËã×îÖÕ°üÎ§ºÐ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ°ï¿½Î§ï¿½ï¿½
 	minX = leftTopPoint.mPointX;
 	minY = leftTopPoint.mPointY;
 	maxX = leftTopPoint.mPointX;
@@ -470,8 +364,8 @@ funcStatus TextureClass::renewTextureSourceBox(
 
 	this->adjustSclaring(additionalMatrix, &offsetAfterScaler,p_wptr);
 
-	//ÖØÐÂ¼ÆËã°üÎ§ºÐ 
-	if(pTileBox == NULL)//Ö±½ÓÐÞ¸ÄÎÆÀí°üÎ§ºÐ
+	//ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½ 
+	if(pTileBox == NULL)//Ö±ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½
 	{
 		this->TexLeftTileBox = ( (offsetAfterScaler.mPointX + minX ) >> 4 ) / TILESIZE;
 		this->TexRightTileBox = ( ( (offsetAfterScaler.mPointX + maxX) >> 4)) / TILESIZE;
@@ -518,20 +412,20 @@ funcStatus TextureClass::renewTextureSourceBox(
 }
 
 //------------------------------------
-// º¯ÊýÃû:RenewRotateTextureSourceBox
-// ÖØÐÂ¼ÆËãÐý×ªÍ¼Æ¬µÄ°üÎ§ºÐ
-// ²ÎÊýÁÐ±í£º
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:RenewRotateTextureSourceBox
+// ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½×ªÍ¼Æ¬ï¿½Ä°ï¿½Î§ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
 //		void
-// ±¸×¢(¸÷¸ö°æ±¾Ö®¼äµÄÐÞ¸Ä):
+// ï¿½ï¿½×¢(ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾Ö®ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½):
 //    added by zhangcheng 20170510
 //------------------------------------
 funcStatus TextureClass::RenewRotateTextureSourceBox()
 {
-	PointClass leftTopPoint(0, 0); //×óÉÏ½Ç¶¨µã
-	PointClass leftBottomPoint(0, 0 + (this->TexHeight * 16) ); //×óÏÂ½Ç
-	PointClass rightTopPoint(0 + (this->TexWidth * 16), 0); //ÓÒÉÏ½Ç
-	PointClass rightBottomPoint(0 + (this->TexWidth * 16), 0 + (this->TexHeight * 16) ); //ÓÒÏÂ½Ç
-	PointClass CentralPoint(0,0);   //ÖÐÐÄµã
+	PointClass leftTopPoint(0, 0); //ï¿½ï¿½ï¿½Ï½Ç¶ï¿½ï¿½ï¿½
+	PointClass leftBottomPoint(0, 0 + (this->TexHeight * 16) ); //ï¿½ï¿½ï¿½Â½ï¿½
+	PointClass rightTopPoint(0 + (this->TexWidth * 16), 0); //ï¿½ï¿½ï¿½Ï½ï¿½
+	PointClass rightBottomPoint(0 + (this->TexWidth * 16), 0 + (this->TexHeight * 16) ); //ï¿½ï¿½ï¿½Â½ï¿½
+	PointClass CentralPoint(0,0);   //ï¿½ï¿½ï¿½Äµï¿½
 
 	s32 RelativeRound=0; //1.27.4
 
@@ -563,11 +457,11 @@ funcStatus TextureClass::RenewRotateTextureSourceBox()
 
 
 //-----------------------------
-// º¯ÊýÃû£º  copyBox
-// ÖØÐÂ¸³Öµ°üÎ§ºÐ
-// ²ÎÊýÁÐ±í£º
-//      u16 centralLength ÖÐÐÄÏß³¤¶È
-// ±¸×¢(¸÷¸ö°æ±¾Ö®¼äµÄÐÞ¸Ä):
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  copyBox
+// ï¿½ï¿½ï¿½Â¸ï¿½Öµï¿½ï¿½Î§ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+//      u16 centralLength ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½
+// ï¿½ï¿½×¢(ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾Ö®ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½):
 //    added by zhouyuzhi 20160614
 //-----------------------------
 funcStatus TextureClass::copyBox(
@@ -582,15 +476,15 @@ funcStatus TextureClass::copyBox(
 }
 
 //-----------------------------
-// º¯ÊýÃû£º  adjustMoving
-// µ÷ÕûÆ½ÒÆ·ÖÁ¿
-// ²ÎÊýÁÐ±í£º
-//      u16 centralLength ÖÐÐÄÏß³¤¶È
-// ±¸×¢(¸÷¸ö°æ±¾Ö®¼äµÄÐÞ¸Ä):
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  adjustMoving
+// ï¿½ï¿½ï¿½ï¿½Æ½ï¿½Æ·ï¿½ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+//      u16 centralLength ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½
+// ï¿½ï¿½×¢(ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾Ö®ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½):
 //    added by zhouyuzhi 20160614
 //-----------------------------
 funcStatus TextureClass::adjustMoving(
-	u16 centralLength, //ÕûÊý
+	u16 centralLength, //ï¿½ï¿½ï¿½ï¿½
 	u16 centralPosX,   //12.4
 	u16 centralPosY    //12.4
 	)
@@ -599,7 +493,7 @@ funcStatus TextureClass::adjustMoving(
 	myMathClass myMath;
 	para1 = 512; //cos
 	para2 = 0;   //sin
-	myMath.CORDIC(this->RotateAngle,&para1,&para2);//ÏÈ¼ÆËãÐý×ªµÄÕý¾ØÕó
+	myMath.CORDIC(this->RotateAngle,&para1,&para2);//ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//this->x = centralx - (height + centralLength) * sin
 	//this->y = centraly + (height + centralLength) * cos
 	this->OffsetX = centralPosX - (( centralLength * para2) >> 5) ;
@@ -610,11 +504,11 @@ funcStatus TextureClass::adjustMoving(
 
 
 //-----------------------------
-// º¯ÊýÃû£º  adjustSclaring
-// ¸ù¾Ý¶¯»­¾ØÕóµ÷ÕûËõ·ÅµÄÆ«ÒÆÁ¿
-// ²ÎÊýÁÐ±í£º
-//      u16 centralLength ÖÐÐÄÏß³¤¶È
-// ±¸×¢(¸÷¸ö°æ±¾Ö®¼äµÄÐÞ¸Ä):
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  adjustSclaring
+// ï¿½ï¿½ï¿½Ý¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åµï¿½Æ«ï¿½ï¿½ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+//      u16 centralLength ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½
+// ï¿½ï¿½×¢(ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾Ö®ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½):
 //    added by zhouyuzhi 20160614
 //-----------------------------
 funcStatus TextureClass::adjustSclaring(
@@ -627,8 +521,8 @@ funcStatus TextureClass::adjustSclaring(
 	if(p_wptr != NULL && addtionalMatrix != NULL)
 	{
 		focusedCanvas = &gPagePtr[WorkingPageID].pCanvasList[p_wptr->ATTATCH_CANVAS];
-		pointAfterScaler->mPointX =(this->OffsetX - (focusedCanvas->moffsetX * 16)) * 512 / addtionalMatrix->A + focusedCanvas->moffsetX * 16 - addtionalMatrix->E;
-		pointAfterScaler->mPointY =(this->OffsetY - (focusedCanvas->moffsetY * 16)) * 512 / addtionalMatrix->A + focusedCanvas->moffsetY * 16 - addtionalMatrix->F;
+		pointAfterScaler->mPointX =(this->OffsetX - (long long)(focusedCanvas->moffsetX * 16)) * 0x100000 / addtionalMatrix->A + focusedCanvas->moffsetX - (addtionalMatrix->E >> 9);
+		pointAfterScaler->mPointY =(this->OffsetY - (long long)(focusedCanvas->moffsetY * 16)) * 0x100000 / addtionalMatrix->A + focusedCanvas->moffsetY - (addtionalMatrix->F >> 9);
 	}
 	else 
 	{
