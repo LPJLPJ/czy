@@ -161,7 +161,7 @@ u16 gScreenWidth;
 u16 gScreenHeight;
 char* cfgString;
 //screen ratio
-s16 screenratio;
+s16 screenratio; //1.6.9
 
 //video
 u8 addr_cvbs = 0;

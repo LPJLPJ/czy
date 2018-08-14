@@ -119,8 +119,8 @@ funcStatus PointClass::leftMulMatrix(matrixClassPtr pMatrix)
 	pointX = ((pMatrix->A * (this->mPointX + pMatrix->E) ) >> 9) + (pMatrix->C * ((this->mPointY + pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
 	pointY = ((pMatrix->B * (this->mPointX + pMatrix->E) ) >> 9) + (pMatrix->D * ((this->mPointY + pMatrix->F) ) >> 9);//4位小数位,先平移再旋转
 #else
-	pointX = (((long long)pMatrix->A * (this->mPointX + (pMatrix->E >> 16)) ) >> 20) + (((long long)pMatrix->C * (this->mPointY + (pMatrix->F >> 16))) >> 20);//4位小数位,先平移再旋转
-	pointY = (((long long)pMatrix->B * (this->mPointX + (pMatrix->E >> 16)) ) >> 20) + (((long long)pMatrix->D * (this->mPointY + (pMatrix->F >> 16))) >> 20);//4位小数位,先平移再旋转
+	pointX = (((long long)pMatrix->A * (this->mPointX + (pMatrix->E >> 9)) ) >> 20) + (((long long)pMatrix->C * (this->mPointY + (pMatrix->F >> 16))) >> 20);//4位小数位,先平移再旋转
+	pointY = (((long long)pMatrix->B * (this->mPointX + (pMatrix->E >> 9)) ) >> 20) + (((long long)pMatrix->D * (this->mPointY + (pMatrix->F >> 16))) >> 20);//4位小数位,先平移再旋转
 #endif
 	this->mPointX = pointX;
 	this->mPointY = pointY;

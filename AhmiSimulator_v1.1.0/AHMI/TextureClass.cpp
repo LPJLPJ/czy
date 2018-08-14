@@ -50,7 +50,7 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 	u8 SB_Matrix, SB_AddrType;
 	myMathClass myMath;
 	PointClass pointTemp(this->OffsetX,this->OffsetY);  //��������������תƫ�����ľ��� NULL == psourceshift ||
-	s32 movingX, movingY;    //x,y������Ҫƫ�Ƶ�ƫ����
+	s32 movingX, movingY;    //1.27.4
 
 
 	if(  NULL == addtionalMatrix || NULL == psourceshift){
@@ -183,8 +183,8 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 			matrixClass matrixTempForScale;
 			matrixTempForScale.matrixInit();
 			//���ڸ��Ĳ�������Ļ��ʾ��߱�����������ʹ�õ�ʱ��Ҫ����ȡ����ʵ������
-			matrixTempForScale.A = (512);
-			matrixTempForScale.D = (screenratio) ; 
+			matrixTempForScale.A = (0x100000);
+			matrixTempForScale.D = (screenratio << 11) ; 
 
 			PointClass pointTemp2(0,0), pointTemp3(0,0);
 			//������ת���µ�����ƫ����
@@ -199,17 +199,17 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 			movingX = pointTemp2.mPointX - ( (s32)(this->TexWidth) *8) + pointTemp3.mPointX - pointTemp2.mPointX;
 			movingY = pointTemp2.mPointY - ( (s32)(this->TexHeight)*8) + pointTemp3.mPointY - pointTemp2.mPointY;
 
-			matrixTemp2.E += movingX * 512 / addtionalMatrix->A ;
-			matrixTemp2.F += movingY * 512 / addtionalMatrix->A ;
+			matrixTemp2.E += ( ( (movingX * 0x100000) / addtionalMatrix->A) << 9 ) ;
+			matrixTemp2.F += ( ( (movingY * 0x100000) / addtionalMatrix->A) << 9 ) ;
 
-			pointTemp.mPointX = ( (s32)(this->TexWidth) * 8); // * 16 / 2;
-			pointTemp.mPointY = ( (s32)(this->TexHeight) * 8); // * 16 / 2;
-			pointTemp.leftMulMatrix(&matrixTemp2);
-			movingX = pointTemp.mPointX - ( (s32)(this->TexWidth) * 8);
-			movingY = pointTemp.mPointY - ( (s32)(this->TexHeight) * 8);
-			
-			matrixTemp2.E += ((movingX * 0x100000 / addtionalMatrix->A) << 9) ;
-			matrixTemp2.F += ((movingY * 0x100000 / addtionalMatrix->A) << 9) ;
+			//pointTemp.mPointX = ( (s32)(this->TexWidth) * 8); // * 16 / 2;
+			//pointTemp.mPointY = ( (s32)(this->TexHeight) * 8); // * 16 / 2;
+			//pointTemp.leftMulMatrix(&matrixTemp2);
+			//movingX = pointTemp.mPointX - ( (s32)(this->TexWidth) * 8);
+			//movingY = pointTemp.mPointY - ( (s32)(this->TexHeight) * 8);
+			//
+			//matrixTemp2.E += ((movingX * 0x100000 / addtionalMatrix->A) << 9) ;
+			//matrixTemp2.F += ((movingY * 0x100000 / addtionalMatrix->A) << 9) ;
 		}
 
 		matrixTemp.E += matrixTemp2.E;
@@ -242,8 +242,8 @@ funcStatus TextureClass::writeSourceBuffer(u32 *psourceshift, matrixClassPtr add
 		{
 		    matrixClass matrixTempForScale;
 		    matrixTempForScale.matrixInit(); 
-		    matrixTempForScale.A = (0x40000 / 512);
-		    matrixTempForScale.D = (0x40000 / screenratio) ; 
+		    matrixTempForScale.A = (0x100000);
+		    matrixTempForScale.D = ( ((unsigned int)(1 << 29)) / screenratio) ; //D is 1.11.20, ratio is 1.6.9, so we need a 1.29's 1 to div ratio
 		    matrixTemp.matrixMulti(&matrixTempForScale);
 		}
 
