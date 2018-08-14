@@ -798,16 +798,16 @@ void ahmi::TexRaster(Tile* tile,Matrix* matrix,u32 addr,u16 tex_width,u16 tex_he
 				switch(MaskType)
 				{
 				case(0)://覆盖显示
-					tile->AlphaBuffer[i]=255;
+					tile->AlphaBuffer[i]= (InitColor & 0xff000000) >> 24;
 					break;
 				case(1)://与显示
-					tile->AlphaBuffer[i] = tile->AlphaBuffer[i] & 255;
+					tile->AlphaBuffer[i] = tile->AlphaBuffer[i] & ((InitColor & 0xff000000) >> 24);
 					break;
 				case(2)://或显示
-					tile->AlphaBuffer[i] = 255;
+					tile->AlphaBuffer[i] = tile->AlphaBuffer[i] | ((InitColor & 0xff000000) >> 24);
 					break;
 				case(3)://取非显示
-					tile->AlphaBuffer[i] = 0;
+					tile->AlphaBuffer[i] = ~((InitColor & 0xff000000) >> 24);
 					break;
 				}
 			 }
